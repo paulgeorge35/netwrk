@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import * as z from "zod";
 import EmojiPicker from "emoji-picker-react";
 import { Input } from "@/components/ui/input";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import {
   Dialog,
   DialogContent,
@@ -34,12 +34,11 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import type { Group, Profile } from "@prisma/client";
 import { Separator } from "@radix-ui/react-separator";
 import Link from "next/link";
 import { api } from "@/utils/api";
 import { Skeleton } from "./ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar } from "./ui/avatar";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
@@ -188,7 +187,7 @@ export function Sidebar({ className }: SidebarProps) {
                 </DialogHeader>
                 <Form {...form}>
                   <form
-                    // onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={() => form.handleSubmit(onSubmit)}
                     className="space-y-8"
                   >
                     <FormField

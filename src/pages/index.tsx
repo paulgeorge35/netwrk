@@ -5,7 +5,7 @@ import { type NextPage } from "next";
 import { useTheme } from "next-themes";
 import Head from "next/head";
 
-const Home: NextPage = (props) => {
+const Home: NextPage = (_) => {
   const user = useUser();
   const { theme, setTheme } = useTheme();
   return (
