@@ -16,3 +16,60 @@ model Example {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
+
+model Profile {
+    id         String  @id @default(uuid())
+    email      String  @unique
+    full_name  String?
+    avatar_url String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Contact {
+    id       String   @id @default(uuid())
+    fullName String
+    firstMet DateTime
+    notes    String?
+    email    String?
+    phone    String?
+
+    profileId String
+    groupId   String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Group {
+    id          String  @id @default(uuid())
+    icon        String
+    name        String
+    description String?
+
+    profileId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Interaction {
+    id    String   @id @default(uuid())
+    date  DateTime
+    notes String?
+
+    typeId    String
+    contactId String
+    profileId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model InteractionType {
+    id   String @id @default(uuid())
+    name String
+
+    profileId String?
+}
