@@ -1,13 +1,18 @@
-import { Bookmark, Clock, Plus, Search, Settings, Users } from "lucide-react";
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { api } from '@/utils/api'
+import { useUser } from '@clerk/nextjs'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Separator } from '@radix-ui/react-separator'
+import EmojiPicker from 'emoji-picker-react'
+import { Bookmark, Clock, Plus, Search, Settings, Users } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useRouter } from "next/router";
-import * as z from "zod";
-import EmojiPicker from "emoji-picker-react";
-import { Input } from "@/components/ui/input";
-// import { v4 as uuidv4 } from "uuid";
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -16,13 +21,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 import {
   Form,
   FormControl,
@@ -30,69 +37,69 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./react-hook-form/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { Separator } from "@radix-ui/react-separator";
-import Link from "next/link";
-import { api } from "@/utils/api";
-import { Skeleton } from "./ui/skeleton";
-import { Avatar } from "./ui/avatar";
-import { useUser } from "@clerk/nextjs";
-import Image from "next/image";
+} from './react-hook-form/form'
+import { Avatar } from './ui/avatar'
+import { Skeleton } from './ui/skeleton'
 
 const groupFormSchema = z.object({
   icon: z.string({
-    required_error: "Icon is required.",
-    invalid_type_error: "Icon format is not valid.",
+    required_error: 'Icon is required.',
+    invalid_type_error: 'Icon format is not valid.',
   }),
   name: z
     .string({
-      required_error: "Name is required.",
+      required_error: 'Name is required.',
     })
     .max(16, {
-      message: "Name must be at most 16 characters.",
+      message: 'Name must be at most 16 characters.',
     }),
-});
+})
 
-type GroupFormValues = z.infer<typeof groupFormSchema>;
+type GroupFormValues = z.infer<typeof groupFormSchema>
 
 const defaultValues: GroupFormValues = {
-  icon: "🏡",
-  name: "",
-};
+  icon: '🏡',
+  name: '',
+}
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  userId?: string;
+  userId?: string
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router = useRouter();
-  const { user } = useUser();
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter()
+  const { user } = useUser()
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues,
-    mode: "onSubmit",
-  });
-  const onSubmit = (_: GroupFormValues) => {
-    setIsLoading(true);
-    // await handleGroupCreate(data);
-    setIsLoading(false);
-    setIsDialogOpen(false);
-  };
+    mode: 'onSubmit',
+  })
+
+  const ctx = api.useContext()
+  const { mutate, isLoading: isCreatingGroup } = api.group.create.useMutation()
+  const onSubmit = (data: GroupFormValues) => {
+    mutate(data, {
+      onSuccess: () => {
+        setIsDialogOpen(false)
+        void ctx.group.getAll.invalidate()
+      },
+      onSettled: () => {
+        setIsLoading(false)
+      },
+    })
+  }
 
   const navigateTo = (path: string) => {
-    router.push(path).catch((err) => console.error(err));
-  };
+    router.push(path).catch((err) => console.error(err))
+  }
 
   const { data: groups, isLoading: isLoadingGroups } =
-    api.group.getAll.useQuery();
+    api.group.getAll.useQuery()
 
   return (
-    <div className={cn("pb-12", className)}>
+    <div className={cn('pb-12', className)}>
       <div className="space-y-4 py-4">
         <div className="px-4 py-2">
           <Link href="/">
@@ -101,8 +108,8 @@ export function Sidebar({ className }: SidebarProps) {
           <div className="flex items-center gap-2">
             <Avatar>
               <Image
-                src={user?.profileImageUrl || ""}
-                alt={`@${user?.username || "Avatar"}`}
+                src={user?.profileImageUrl || ''}
+                alt={`@${user?.username || 'Avatar'}`}
                 width={48}
                 height={48}
               />
@@ -118,8 +125,8 @@ export function Sidebar({ className }: SidebarProps) {
               Search
             </Button>
             <Button
-              variant={router.pathname === "/settings" ? "secondary" : "ghost"}
-              onClick={() => navigateTo("/settings")}
+              variant={router.pathname === '/settings' ? 'secondary' : 'ghost'}
+              onClick={() => navigateTo('/settings')}
               size="sm"
               className="w-full justify-start"
             >
@@ -127,8 +134,8 @@ export function Sidebar({ className }: SidebarProps) {
               Settings
             </Button>
             <Button
-              variant={router.pathname === "/reminders" ? "secondary" : "ghost"}
-              onClick={() => navigateTo("/reminders")}
+              variant={router.pathname === '/reminders' ? 'secondary' : 'ghost'}
+              onClick={() => navigateTo('/reminders')}
               size="sm"
               className="w-full justify-start"
             >
@@ -137,9 +144,9 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
             <Button
               variant={
-                router.pathname === "/interactions" ? "secondary" : "ghost"
+                router.pathname === '/interactions' ? 'secondary' : 'ghost'
               }
-              onClick={() => navigateTo("/interactions")}
+              onClick={() => navigateTo('/interactions')}
               size="sm"
               className="w-full justify-start"
             >
@@ -147,8 +154,8 @@ export function Sidebar({ className }: SidebarProps) {
               Interactions
             </Button>
             <Button
-              variant={router.pathname === "/" ? "secondary" : "ghost"}
-              onClick={() => navigateTo("/")}
+              variant={router.pathname === '/' ? 'secondary' : 'ghost'}
+              onClick={() => navigateTo('/')}
               size="sm"
               className="w-full justify-start"
             >
@@ -209,7 +216,7 @@ export function Sidebar({ className }: SidebarProps) {
                               <PopoverContent side="right" className="w-96 p-4">
                                 <EmojiPicker
                                   onEmojiClick={(emoji) =>
-                                    form.setValue("icon", emoji.emoji)
+                                    form.setValue('icon', emoji.emoji)
                                   }
                                   lazyLoadEmojis
                                 />
@@ -234,7 +241,11 @@ export function Sidebar({ className }: SidebarProps) {
                       )}
                     />
                     <DialogFooter>
-                      <Button disabled={isLoading} type="submit">
+                      <Button
+                        isLoading={isCreatingGroup}
+                        disabled={isLoading}
+                        type="submit"
+                      >
                         Create Group
                       </Button>
                     </DialogFooter>
@@ -256,7 +267,7 @@ export function Sidebar({ className }: SidebarProps) {
                     <Button
                       key={`${group.id}-${i}`}
                       onClick={() => {
-                        navigateTo(`/group/${group.id}`);
+                        navigateTo(`/group/${group.id}`)
                       }}
                       // variant={
                       //   group.id === useParams().slug ? "secondary" : "ghost"
@@ -277,5 +288,5 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

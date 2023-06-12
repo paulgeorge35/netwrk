@@ -36,7 +36,7 @@ model Contact {
     phone    String?
 
     profileId String
-    groupId   String?
+    groups    Group[] @relation("ContactGroup")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -49,6 +49,7 @@ model Group {
     description String?
 
     profileId String
+    contacts  Contact[] @relation("ContactGroup")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

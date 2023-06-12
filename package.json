@@ -7,10 +7,12 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "prettier": "prettier --write \"**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@clerk/nextjs": "^4.19.1",
+    "@clerk/themes": "^1.7.5",
     "@hookform/resolvers": "^3.1.0",
     "@prisma/client": "^4.14.0",
     "@radix-ui/react-alert-dialog": "^1.0.4",

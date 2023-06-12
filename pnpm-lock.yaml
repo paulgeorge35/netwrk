@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@clerk/nextjs': ^4.19.1
+  '@clerk/themes': ^1.7.5
   '@hookform/resolvers': ^3.1.0
   '@ianvs/prettier-plugin-sort-imports': ^4.0.2
   '@prisma/client': ^4.14.0
@@ -59,6 +60,7 @@ specifiers:
 
 dependencies:
   '@clerk/nextjs': 4.19.1_z4pol2qj2yv3um3jqqobs4b3eu
+  '@clerk/themes': 1.7.5_react@18.2.0
   '@hookform/resolvers': 3.1.0_react-hook-form@7.44.3
   '@prisma/client': 4.15.0_prisma@4.15.0
   '@radix-ui/react-alert-dialog': 1.0.4_nt3dzwb3srfhvwd6kfpoey3m3m
@@ -398,6 +400,15 @@ packages:
       react: '>=16'
     dependencies:
       glob-to-regexp: 0.4.1
+      react: 18.2.0
+    dev: false
+
+  /@clerk/themes/1.7.5_react@18.2.0:
+    resolution: {integrity: sha512-kIdCIBSCp6t1saGAzbelcfZi5P+L3+CuVFwSjpulwGTRxeOOs/S8hB4CAHVbTwfxPw5Ms+AnN4dXJKHjSnxPIg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
       react: 18.2.0
     dev: false
 
