@@ -3,6 +3,8 @@ lockfileVersion: 5.4
 specifiers:
   '@clerk/nextjs': ^4.19.1
   '@clerk/themes': ^1.7.5
+  '@emoji-mart/data': ^1.1.2
+  '@emoji-mart/react': ^1.1.1
   '@hookform/resolvers': ^3.1.0
   '@ianvs/prettier-plugin-sort-imports': ^4.0.2
   '@prisma/client': ^4.14.0
@@ -24,6 +26,7 @@ specifiers:
   '@trpc/next': ^10.26.0
   '@trpc/react-query': ^10.26.0
   '@trpc/server': ^10.26.0
+  '@types/emoji-mart': ^3.0.9
   '@types/eslint': ^8.37.0
   '@types/node': ^18.16.0
   '@types/prettier': ^2.7.2
@@ -36,6 +39,7 @@ specifiers:
   autoprefixer: ^10.4.14
   class-variance-authority: ^0.6.0
   clsx: ^1.2.1
+  emoji-mart: ^5.5.2
   emoji-picker-react: ^4.4.9
   eslint: ^8.40.0
   eslint-config-next: ^13.4.2
@@ -61,6 +65,8 @@ specifiers:
 dependencies:
   '@clerk/nextjs': 4.19.1_z4pol2qj2yv3um3jqqobs4b3eu
   '@clerk/themes': 1.7.5_react@18.2.0
+  '@emoji-mart/data': 1.1.2
+  '@emoji-mart/react': 1.1.1_kyrnz3vmphzqyjjk2ivrm6bcsu
   '@hookform/resolvers': 3.1.0_react-hook-form@7.44.3
   '@prisma/client': 4.15.0_prisma@4.15.0
   '@radix-ui/react-alert-dialog': 1.0.4_nt3dzwb3srfhvwd6kfpoey3m3m
@@ -84,6 +90,7 @@ dependencies:
   '@vercel/analytics': 1.0.1
   class-variance-authority: 0.6.0_typescript@5.1.3
   clsx: 1.2.1
+  emoji-mart: 5.5.2
   emoji-picker-react: 4.4.9_react@18.2.0
   lucide-react: 0.240.0_react@18.2.0
   next: 13.4.4_biqbaboplfbrettd7655fr4n2y
@@ -99,6 +106,7 @@ dependencies:
 
 devDependencies:
   '@ianvs/prettier-plugin-sort-imports': 4.0.2_prettier@2.8.8
+  '@types/emoji-mart': 3.0.9
   '@types/eslint': 8.40.0
   '@types/node': 18.16.16
   '@types/prettier': 2.7.3
@@ -417,6 +425,20 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       csstype: 3.1.1
+    dev: false
+
+  /@emoji-mart/data/1.1.2:
+    resolution: {integrity: sha512-1HP8BxD2azjqWJvxIaWAMyTySeZY0Osr83ukYjltPVkNXeJvTz7yDrPLBtnrD5uqJ3tg4CcLuuBW09wahqL/fg==}
+    dev: false
+
+  /@emoji-mart/react/1.1.1_kyrnz3vmphzqyjjk2ivrm6bcsu:
+    resolution: {integrity: sha512-NMlFNeWgv1//uPsvLxvGQoIerPuVdXwK/EUek8OOkJ6wVOWPUizRBJU0hDqWZCOROVpfBgCemaC3m6jDOXi03g==}
+    peerDependencies:
+      emoji-mart: ^5.2
+      react: ^16.8 || ^17 || ^18
+    dependencies:
+      emoji-mart: 5.5.2
+      react: 18.2.0
     dev: false
 
   /@eslint-community/eslint-utils/4.4.0_eslint@8.42.0:
@@ -1655,6 +1677,12 @@ packages:
       '@types/node': 18.16.16
     dev: false
 
+  /@types/emoji-mart/3.0.9:
+    resolution: {integrity: sha512-qdBo/2Y8MXaJ/2spKjDZocuq79GpnOhkwMHnK2GnVFa8WYFgfA+ei6sil3aeWQPCreOKIx9ogPpR5+7MaOqYAA==}
+    dependencies:
+      '@types/react': 18.2.8
+    dev: true
+
   /@types/eslint/8.40.0:
     resolution: {integrity: sha512-nbq2mvc/tBrK9zQQuItvjJl++GTN5j06DaPtp3hZCpngmG6Q3xoyEmd0TwZI0gAy/G1X0zhGBbr2imsGFdFV0g==}
     dependencies:
@@ -2441,6 +2469,10 @@ packages:
   /electron-to-chromium/1.4.421:
     resolution: {integrity: sha512-wZOyn3s/aQOtLGAwXMZfteQPN68kgls2wDAnYOA8kCjBvKVrW5RwmWVspxJYTqrcN7Y263XJVsC66VCIGzDO3g==}
     dev: true
+
+  /emoji-mart/5.5.2:
+    resolution: {integrity: sha512-Sqc/nso4cjxhOwWJsp9xkVm8OF5c+mJLZJFoFfzRuKO+yWiN7K8c96xmtughYb0d/fZ8UC6cLIQ/p4BR6Pv3/A==}
+    dev: false
 
   /emoji-picker-react/4.4.9_react@18.2.0:
     resolution: {integrity: sha512-ef9MfzSJy5xrzihLLv0e1zZmiNtcekubctTBQVfIpvKfsfu4iLBBzcHCmOC2IaUVBCZuUw+GM24BAPj1MdCQXQ==}

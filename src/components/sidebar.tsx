@@ -4,11 +4,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { api } from '@/utils/api'
 import { useUser } from '@clerk/nextjs'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AvatarFallback } from '@radix-ui/react-avatar'
 import { Separator } from '@radix-ui/react-separator'
-import EmojiPicker from 'emoji-picker-react'
 import { Bookmark, Clock, Plus, Search, Settings, Users } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+// import EmojiPicker from 'emoji-picker-react'
 import * as z from 'zod'
 
 import { cn } from '@/lib/utils'
@@ -75,11 +78,13 @@ export function Sidebar({ className }: SidebarProps) {
     resolver: zodResolver(groupFormSchema),
     defaultValues,
     mode: 'onSubmit',
+    shouldFocusError: true,
   })
 
   const ctx = api.useContext()
   const { mutate, isLoading: isCreatingGroup } = api.group.create.useMutation()
   const onSubmit = (data: GroupFormValues) => {
+    console.log(data)
     mutate(data, {
       onSuccess: () => {
         setIsDialogOpen(false)
@@ -107,12 +112,17 @@ export function Sidebar({ className }: SidebarProps) {
           </Link>
           <div className="flex items-center gap-2">
             <Avatar>
-              <Image
-                src={user?.profileImageUrl || ''}
-                alt={`@${user?.username || 'Avatar'}`}
-                width={48}
-                height={48}
-              />
+              {user?.profileImageUrl && (
+                <Image
+                  src={user.profileImageUrl || ''}
+                  alt={`@${user?.username || 'Avatar'}`}
+                  width={48}
+                  height={48}
+                />
+              )}
+              <AvatarFallback>
+                <Skeleton className="w-12 h-12 rounded-full" />
+              </AvatarFallback>
             </Avatar>
             <Separator
               orientation="horizontal"
@@ -214,11 +224,14 @@ export function Sidebar({ className }: SidebarProps) {
                               </PopoverTrigger>
                               <span className="sr-only">Open popover</span>
                               <PopoverContent side="right" className="w-96 p-4">
-                                <EmojiPicker
-                                  onEmojiClick={(emoji) =>
-                                    form.setValue('icon', emoji.emoji)
+                                <Picker
+                                  data={data}
+                                  onEmojiSelect={(emoji: { native: string }) =>
+                                    form.setValue('icon', emoji.native)
                                   }
-                                  lazyLoadEmojis
+                                  theme="auto"
+                                  maxFrequentRows={1}
+                                  navPosition="none"
                                 />
                               </PopoverContent>
                             </Popover>
@@ -269,10 +282,9 @@ export function Sidebar({ className }: SidebarProps) {
                       onClick={() => {
                         navigateTo(`/group/${group.id}`)
                       }}
-                      // variant={
-                      //   group.id === useParams().slug ? "secondary" : "ghost"
-                      // }
-                      variant="ghost"
+                      variant={
+                        group.id === router.query.id ? 'secondary' : 'ghost'
+                      }
                       size="sm"
                       className="w-full justify-between font-normal"
                     >

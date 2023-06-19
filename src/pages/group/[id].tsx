@@ -26,7 +26,7 @@ const GroupPage: NextPage = (_) => {
       </Head>
       <main className="grid min-h-screen bg-background lg:grid-cols-5">
         <Sidebar className="hidden lg:block" />
-        <div className="text-secondary-foreground"></div>
+        <div className="text-secondary-foreground col-span-3 lg:col-span-4 lg:border-l"></div>
       </main>
     </>
   )

@@ -15,7 +15,7 @@ const Home: NextPage = (_) => {
       </Head>
       <main className="grid min-h-screen bg-background lg:grid-cols-5">
         <Sidebar className="hidden lg:block" userId={user?.user?.id} />
-        <div className="text-secondary-foreground">
+        <div className="text-secondary-foreground col-span-3 lg:col-span-4 lg:border-l">
           {user.isSignedIn && <SignOutButton />}
         </div>
       </main>

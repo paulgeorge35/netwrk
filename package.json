@@ -13,6 +13,8 @@
   "dependencies": {
     "@clerk/nextjs": "^4.19.1",
     "@clerk/themes": "^1.7.5",
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@hookform/resolvers": "^3.1.0",
     "@prisma/client": "^4.14.0",
     "@radix-ui/react-alert-dialog": "^1.0.4",
@@ -36,6 +38,7 @@
     "@vercel/analytics": "^1.0.1",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
+    "emoji-mart": "^5.5.2",
     "emoji-picker-react": "^4.4.9",
     "lucide-react": "^0.240.0",
     "next": "^13.4.2",
@@ -51,6 +54,7 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.0.2",
+    "@types/emoji-mart": "^3.0.9",
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",
