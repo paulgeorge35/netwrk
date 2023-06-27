@@ -3,20 +3,24 @@ import { type AppType } from 'next/app'
 import '@/styles/globals.css'
 
 import { api } from '@/utils/api'
-import { ClerkProvider } from '@clerk/nextjs'
 import { Analytics } from '@vercel/analytics/react'
+import type { Session } from 'next-auth'
+import { SessionProvider } from 'next-auth/react'
 
 import { ThemeProvider } from '@/components/theme-provider'
 
 export { reportWebVitals } from 'next-axiom'
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   return (
     <>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <ClerkProvider {...pageProps}>
+        <SessionProvider session={session}>
           <Component {...pageProps} />
-        </ClerkProvider>
+        </SessionProvider>
       </ThemeProvider>
       <Analytics />
     </>

@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
-import { createTRPCRouter, privateProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 export const contactRouter = createTRPCRouter({
-  getAll: privateProcedure
+  getAll: protectedProcedure
     .input(
       z.object({
         page: z.number().int().min(1).optional().default(1),
@@ -11,15 +11,15 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const profileId = ctx.userId
+      const userId = ctx.session.user.id
       return await ctx.prisma.contact.findMany({
-        where: { profileId },
+        where: { userId },
         skip: (input.page - 1) * input.pageSize,
         take: input.pageSize,
       })
     }),
 
-  getAllByGroupId: privateProcedure
+  getAllByGroupId: protectedProcedure
     .input(
       z.object({
         groupId: z.string().uuid(),
@@ -28,15 +28,16 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const profileId = ctx.userId
+      const userId = ctx.session.user.id
+
       return await ctx.prisma.contact.findMany({
-        where: { profileId, groups: { some: { id: input.groupId } } },
+        where: { userId, groups: { some: { id: input.groupId } } },
         skip: (input.page - 1) * input.pageSize,
         take: input.pageSize,
       })
     }),
 
-  create: privateProcedure
+  create: protectedProcedure
     .input(
       z.object({
         fullName: z.string().max(50),
@@ -48,7 +49,7 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const profileId = ctx.userId
+      const userId = ctx.session.user.id
       const { groups, ...rest } = input
       groups?.forEach((id) => {
         void (async () => {
@@ -59,14 +60,14 @@ export const contactRouter = createTRPCRouter({
       const contact = await ctx.prisma.contact.create({
         data: {
           ...rest,
-          profileId,
+          userId,
           groups: { connect: groups?.map((id) => ({ id })) },
         },
       })
       return contact
     }),
 
-  update: privateProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
@@ -79,7 +80,7 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const profileId = ctx.userId
+      const userId = ctx.session.user.id
       const { id, groups, ...rest } = input
       groups?.forEach((id) => {
         void (async () => {
@@ -91,7 +92,7 @@ export const contactRouter = createTRPCRouter({
         where: { id },
         data: {
           ...rest,
-          profileId,
+          userId,
           groups: { set: groups?.map((id) => ({ id })) },
         },
       })

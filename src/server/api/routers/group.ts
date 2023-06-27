@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
-import { createTRPCRouter, privateProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 export const groupRouter = createTRPCRouter({
-  getAll: privateProcedure.query(async ({ ctx }) => {
-    const profileId = ctx.userId
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id
     const groups = await ctx.prisma.group.findMany({
-      where: { profileId },
+      where: { userId },
       include: {
         _count: {
           select: { contacts: true },
@@ -22,18 +22,19 @@ export const groupRouter = createTRPCRouter({
     return result
   }),
 
-  getOne: privateProcedure
+  getOne: protectedProcedure
     .input(z.string().uuid())
     .query(async ({ ctx, input: id }) => {
-      const profileId = ctx.userId
+      const userId = ctx.session.user.id
+
       const group = await ctx.prisma.group.findFirst({
-        where: { id, profileId },
+        where: { id, userId },
       })
       if (!group) throw new Error(`Group with id ${id} does not exist`)
       return group
     }),
 
-  create: privateProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string().max(20),
@@ -42,9 +43,10 @@ export const groupRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const profileId = ctx.userId
+      const userId = ctx.session.user.id
+
       const group = await ctx.prisma.group.create({
-        data: { ...input, profileId },
+        data: { ...input, userId },
       })
       return group
     }),

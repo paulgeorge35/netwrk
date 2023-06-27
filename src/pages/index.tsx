@@ -1,11 +1,11 @@
 import { type NextPage } from 'next'
 import Head from 'next/head'
-import { SignOutButton, useUser } from '@clerk/nextjs'
+import { useSession } from 'next-auth/react'
 
 import { Sidebar } from '@/components/sidebar'
 
 const Home: NextPage = (_) => {
-  const user = useUser()
+  const session = useSession()
   return (
     <>
       <Head>
@@ -14,9 +14,9 @@ const Home: NextPage = (_) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="grid min-h-screen bg-background lg:grid-cols-5">
-        <Sidebar className="hidden lg:block" userId={user?.user?.id} />
+        <Sidebar className="hidden lg:block" userId={session.data?.user.id} />
         <div className="text-secondary-foreground col-span-3 lg:col-span-4 lg:border-l">
-          {user.isSignedIn && <SignOutButton />}
+          {/* {user.isSignedIn && <SignOutButton />} */}
         </div>
       </main>
     </>

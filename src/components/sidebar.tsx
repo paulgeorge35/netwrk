@@ -3,15 +3,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { api } from '@/utils/api'
-import { useUser } from '@clerk/nextjs'
-import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AvatarFallback } from '@radix-ui/react-avatar'
 import { Separator } from '@radix-ui/react-separator'
 import { Bookmark, Clock, Plus, Search, Settings, Users } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
-// import EmojiPicker from 'emoji-picker-react'
 import * as z from 'zod'
 
 import { cn } from '@/lib/utils'
@@ -73,7 +71,7 @@ export function Sidebar({ className }: SidebarProps) {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
-  const { user } = useUser()
+  const { data } = useSession()
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues,
@@ -112,10 +110,10 @@ export function Sidebar({ className }: SidebarProps) {
           </Link>
           <div className="flex items-center gap-2">
             <Avatar>
-              {user?.profileImageUrl && (
+              {data?.user && (
                 <Image
-                  src={user.profileImageUrl || ''}
-                  alt={`@${user?.username || 'Avatar'}`}
+                  src={data.user.image || ''}
+                  alt={`@${data.user.name || 'Avatar'}`}
                   width={48}
                   height={48}
                 />
