@@ -46,10 +46,9 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime?
-    full_name     String?
-    avatar_url    String?
-    password      String?
     image         String?
+
+    config Config?
 
     accounts         Account[]
     sessions         Session[]
@@ -71,12 +70,15 @@ model VerificationToken {
 }
 
 model Contact {
-    id       String   @id @default(uuid())
-    fullName String
-    firstMet DateTime
-    notes    String?
-    email    String?
-    phone    String?
+    id                  String    @id @default(uuid())
+    fullName            String
+    firstMet            DateTime?
+    notes               String?
+    email               String?
+    phone               String?
+    lastInteraction     DateTime?
+    lastInteractionType String?
+    avatar              String?   @db.Text
 
     userId String
     user   User   @relation(fields: [userId], references: [id])
@@ -135,6 +137,21 @@ model InteractionType {
     user   User?   @relation(fields: [userId], references: [id])
 
     intereactions Interaction[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model Config {
+    id             String  @id @default(uuid())
+    reminderEmails Boolean @default(false)
+    keepInTouch    Boolean @default(false)
+    timezone       String  @default("(GMT+3) Europe/Bucharest")
+
+    userId String? @unique
+    user   User?   @relation(fields: [userId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

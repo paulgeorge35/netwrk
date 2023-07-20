@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const contactRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -11,12 +11,12 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id
+      const userId = ctx.session.user.id;
       return await ctx.prisma.contact.findMany({
         where: { userId },
         skip: (input.page - 1) * input.pageSize,
         take: input.pageSize,
-      })
+      });
     }),
 
   getAllByGroupId: protectedProcedure
@@ -25,23 +25,47 @@ export const contactRouter = createTRPCRouter({
         groupId: z.string().uuid(),
         page: z.number().int().min(1).optional().default(1),
         pageSize: z.number().int().min(1).optional().default(10),
+        orderBy: z
+          .enum(['fullName', 'lastInteraction', 'notes'])
+          .optional()
+          .default('fullName'),
       })
     )
     .query(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id
+      const userId = ctx.session.user.id;
 
       return await ctx.prisma.contact.findMany({
         where: { userId, groups: { some: { id: input.groupId } } },
         skip: (input.page - 1) * input.pageSize,
         take: input.pageSize,
+        orderBy: { [input.orderBy]: 'asc' },
+      });
+    }),
+
+  getAllNotInGroup: protectedProcedure
+    .input(
+      z.object({
+        groupId: z.string().uuid(),
+        page: z.number().int().min(1).optional().default(1),
+        pageSize: z.number().int().min(1).optional().default(10),
       })
+    )
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      return await ctx.prisma.contact.findMany({
+        where: { userId, groups: { none: { id: input.groupId } } },
+        skip: (input.page - 1) * input.pageSize,
+        take: input.pageSize,
+      });
     }),
 
   create: protectedProcedure
     .input(
       z.object({
         fullName: z.string().max(50),
-        firstMet: z.date(),
+        firstMet: z.date().optional(),
+        avatar: z.string().max(10000).optional(),
         notes: z.string().max(250).optional(),
         email: z.string().email().optional(),
         phone: z.string().optional(),
@@ -49,22 +73,23 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id
-      const { groups, ...rest } = input
+      const userId = ctx.session.user.id;
+      const { groups, ...rest } = input;
+      console.log(input.avatar?.length);
       groups?.forEach((id) => {
         void (async () => {
-          const group = await ctx.prisma.group.findUnique({ where: { id } })
-          if (!group) throw new Error(`Group with id ${id} does not exist`)
-        })()
-      })
+          const group = await ctx.prisma.group.findUnique({ where: { id } });
+          if (!group) throw new Error(`Group with id ${id} does not exist`);
+        })();
+      });
       const contact = await ctx.prisma.contact.create({
         data: {
           ...rest,
-          userId,
+          user: { connect: { id: userId } },
           groups: { connect: groups?.map((id) => ({ id })) },
         },
-      })
-      return contact
+      });
+      return contact;
     }),
 
   update: protectedProcedure
@@ -76,26 +101,81 @@ export const contactRouter = createTRPCRouter({
         notes: z.string().max(250).optional(),
         email: z.string().email().optional(),
         phone: z.string().optional(),
-        groups: z.array(z.string().uuid()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id
-      const { id, groups, ...rest } = input
-      groups?.forEach((id) => {
-        void (async () => {
-          const group = await ctx.prisma.group.findUnique({ where: { id } })
-          if (!group) throw new Error(`Group with id ${id} does not exist`)
-        })()
-      })
-      const contact = await ctx.prisma.contact.update({
+      const userId = ctx.session.user.id;
+      const { id, ...rest } = input;
+
+      const contact = await ctx.prisma.contact.findFirst({
+        where: { id, userId },
+      });
+      if (!contact) throw new Error(`Contact with id ${id} does not exist`);
+
+      return await ctx.prisma.contact.update({
         where: { id },
         data: {
           ...rest,
-          userId,
-          groups: { set: groups?.map((id) => ({ id })) },
         },
-      })
-      return contact
+      });
     }),
-})
+
+  addToGroup: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        groupId: z.string().uuid(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const { id, groupId } = input;
+
+      const contact = await ctx.prisma.contact.findFirst({
+        where: { id, userId },
+      });
+      if (!contact) throw new Error(`Contact with id ${id} does not exist`);
+
+      const group = await ctx.prisma.group.findFirst({
+        where: { id: groupId, userId },
+      });
+      if (!group) throw new Error(`Group with id ${groupId} does not exist`);
+
+      return await ctx.prisma.contact.update({
+        where: { id },
+        data: {
+          groups: { connect: { id: groupId } },
+        },
+      });
+    }),
+
+  removeFromGroup: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        groupId: z.string().uuid(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const { id, groupId } = input;
+
+      const contactToBeUpdated = await ctx.prisma.contact.findFirst({
+        where: { id, userId },
+      });
+      if (!contactToBeUpdated)
+        throw new Error(`Contact with id ${id} does not exist`);
+
+      const group = await ctx.prisma.group.findFirst({
+        where: { id: groupId, userId },
+      });
+      if (!group) throw new Error(`Group with id ${groupId} does not exist`);
+
+      return await ctx.prisma.contact.update({
+        where: { id },
+        data: {
+          groups: { disconnect: { id: groupId } },
+        },
+      });
+    }),
+});
