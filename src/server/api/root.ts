@@ -1,6 +1,7 @@
 import { contactRouter } from './routers/contact';
 import { groupRouter } from './routers/group';
 import { interactionRouter } from './routers/interaction';
+import { interactioTypeRouter } from './routers/interactionType';
 import { userRouter } from './routers/user';
 import { createTRPCRouter } from './trpc';
 
@@ -13,7 +14,8 @@ export const appRouter = createTRPCRouter({
   group: groupRouter,
   contact: contactRouter,
   user: userRouter,
-  interaction: interactionRouter
+  interaction: interactionRouter,
+  interactionType: interactioTypeRouter,
 });
 
 // export type definition of API
