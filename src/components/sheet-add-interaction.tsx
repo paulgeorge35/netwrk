@@ -20,13 +20,27 @@ import {
 } from './react-hook-form/form';
 import { Textarea } from './ui/textarea';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar } from './ui/calendar';
 import { useToast } from './ui/use-toast';
 import { useHotkeys } from 'react-hotkeys-hook';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from './ui/command';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 const interactionCreateSchema = z.object({
   date: z.date(),
@@ -40,6 +54,10 @@ type InteractionCreateValues = z.infer<typeof interactionCreateSchema>;
 export const AddInteractionSheet = () => {
   const { toast } = useToast();
   const [open, setOpen] = React.useState<boolean>(false);
+  const [openPop, setOpenPop] = React.useState<boolean>(false);
+  const [selectedContactId, setSelectedContactId] = React.useState<
+    string | undefined
+  >(undefined);
 
   useHotkeys('i', () => {
     setOpen(true);
@@ -51,6 +69,14 @@ export const AddInteractionSheet = () => {
     queryKey: ['interactionType.getAll', undefined],
     _optimisticResults: 'optimistic',
   });
+
+  const { data: contacts } = api.contact.getAll.useQuery(
+    { page: 1, pageSize: 1000 },
+    {
+      queryKey: ['contact.getAll', { page: 1, pageSize: 1000 }],
+      _optimisticResults: 'optimistic',
+    }
+  );
 
   const form = useForm<InteractionCreateValues>({
     resolver: zodResolver(interactionCreateSchema),
@@ -96,7 +122,7 @@ export const AddInteractionSheet = () => {
       </SheetTrigger>
       <SheetContent className="h-screen overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>New Person</SheetTitle>
+          <SheetTitle>New Interaction</SheetTitle>
         </SheetHeader>
         <form
           className="flex flex-col justify-between gap-4 py-4"
@@ -104,6 +130,92 @@ export const AddInteractionSheet = () => {
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <span className="flex flex-col justify-between gap-4 ">
+            <FormField
+              control={form.control}
+              name="contactId"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="block">Contact</FormLabel>
+                  <FormControl>
+                    <Popover open={openPop} onOpenChange={setOpenPop}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openPop}
+                          className="w-[200px] justify-between"
+                        >
+                          {selectedContactId && contacts
+                            ? contacts.find(
+                                (contact) => contact.id === selectedContactId
+                              )?.fullName
+                            : 'Select contact...'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="max-h-[300px] w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search contact..." />
+                          <CommandEmpty>No contact found.</CommandEmpty>
+                          <CommandGroup>
+                            {contacts &&
+                              contacts.map((contact) => (
+                                <CommandItem
+                                  key={contact.id}
+                                  onSelect={(currentValue) => {
+                                    setSelectedContactId(
+                                      currentValue === selectedContactId
+                                        ? undefined
+                                        : contact.id
+                                    );
+                                    if (currentValue === selectedContactId)
+                                      form.reset({ contactId: undefined });
+                                    else form.setValue('contactId', contact.id);
+                                    setOpenPop(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      'mr-2 h-4 w-4',
+                                      selectedContactId === contact.id
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                  {contact.fullName}
+                                </CommandItem>
+                              ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="typeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="block">Type</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="Select type..." />
+                      </SelectTrigger>
+                      <SelectContent side="top">
+                        {types &&
+                          types.map((type) => (
+                            <SelectItem key={type.id} value={type.id}>
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="date"
@@ -116,7 +228,7 @@ export const AddInteractionSheet = () => {
                         <Button
                           variant={'outline'}
                           className={cn(
-                            'w-[280px] justify-start text-left font-normal',
+                            'w-[200px] justify-start text-left font-normal',
                             !form.getValues().date && 'text-muted-foreground'
                           )}
                         >

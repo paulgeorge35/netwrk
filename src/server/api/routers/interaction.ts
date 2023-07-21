@@ -52,7 +52,7 @@ export const interactionRouter = createTRPCRouter({
       const { contactId, typeId, ...rest } = input;
 
       const interactionType = await ctx.prisma.interactionType.findFirst({
-        where: { id: typeId, userId },
+        where: { id: typeId, OR: [{ userId }, { userId: null }] },
       });
       if (!interactionType)
         throw new Error(`Interaction type with id ${typeId} does not exist`);
@@ -82,6 +82,8 @@ export const interactionRouter = createTRPCRouter({
       const lastInteraction = contact.interactions.sort(
         (a, b) => b.date.getTime() - a.date.getTime()
       )[0];
+
+      console.log(lastInteraction);
 
       await ctx.prisma.contact.update({
         where: { id: contactId },
