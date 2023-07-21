@@ -50,10 +50,50 @@ export const userRouter = createTRPCRouter({
             upsert: {
               create: input,
               update: input,
-            }
-          }
+            },
+          },
         },
       });
       return user;
+    }),
+  search: protectedProcedure
+    .input(z.string().optional().default(''))
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      if (input !== '') {
+        console.log('SEARCH: ', input);
+        return await ctx.prisma.contact
+          .findMany({
+            where: {
+              userId,
+              OR: [
+                { fullName: { contains: input } },
+                { notes: { contains: input } },
+                {
+                  interactions: {
+                    some: {
+                      notes: { contains: input },
+                    },
+                  },
+                },
+              ],
+            },
+            include: {
+              interactions: true,
+            },
+          })
+          .then((contacts) =>
+            contacts.map((contact) => ({
+              ...contact,
+              interactions: contact.interactions.filter(
+                (interaction) =>
+                  interaction.notes &&
+                  interaction.notes.toLowerCase().includes(input.toLowerCase())
+              ),
+            }))
+          );
+      }
+      return [];
     }),
 });
