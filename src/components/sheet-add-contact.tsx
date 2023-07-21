@@ -269,8 +269,6 @@ export const AddContactSheet = ({
                 <FormItem>
                   <FormLabel>Date Met</FormLabel>
                   <FormControl>
-                    {/* <Input {...field} /> */}
-
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
