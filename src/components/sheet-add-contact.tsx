@@ -1,6 +1,5 @@
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
@@ -21,7 +20,7 @@ import {
   FormLabel,
 } from './react-hook-form/form';
 import { Textarea } from './ui/textarea';
-import { format, set } from 'date-fns';
+import { format } from 'date-fns';
 import { CalendarIcon, FileImage, Plus, X } from 'lucide-react';
 import React, { type ChangeEvent } from 'react';
 import { Avatar } from './ui/avatar';
