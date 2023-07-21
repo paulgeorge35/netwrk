@@ -5,10 +5,15 @@ import { createTRPCRouter, protectedProcedure } from '../trpc';
 export const interactioTypeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
-    return await ctx.prisma.interactionType.findMany({
+    const standardInteractionTypes = await ctx.prisma.interactionType.findMany({
+      where: { userId: null },
+      orderBy: { name: 'asc' },
+    });
+    const userInteractionTypes = await ctx.prisma.interactionType.findMany({
       where: { userId },
       orderBy: { name: 'asc' },
     });
+    return [...standardInteractionTypes, ...userInteractionTypes];
   }),
 
   create: protectedProcedure
