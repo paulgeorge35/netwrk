@@ -53,7 +53,7 @@ const Interactions: NextPage = (_) => {
           </Command>
 
           <span className="flex max-w-[500px] flex-col gap-4">
-            {interactions &&
+            {interactions && interactions.length > 0 ? (
               interactions
                 .filter(
                   (interaction) =>
@@ -101,7 +101,10 @@ const Interactions: NextPage = (_) => {
                         ))}
                     </>
                   );
-                })}
+                })
+            ) : (
+              <h1>No interactions found.</h1>
+            )}
           </span>
         </div>
       </main>
