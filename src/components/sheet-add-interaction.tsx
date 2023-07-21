@@ -20,7 +20,7 @@ import {
 } from './react-hook-form/form';
 import { Textarea } from './ui/textarea';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import { CalendarIcon, Check } from 'lucide-react';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';

@@ -85,14 +85,18 @@ export const columns: ColumnDef<Contact>[] = [
               {row.getValue('lastInteractionType')}
             </Badge>
           )}
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue('lastInteraction')
-              ? format(
-                  new Date(row.getValue('lastInteraction')),
-                  'MMM d, yyyy h:mm a'
-                )
-              : ''}
-          </span>
+          {row.getValue('lastInteraction') ? (
+            <span className="max-w-[300px] truncate font-medium">
+              {format(
+                new Date(row.getValue('lastInteraction')),
+                'MMM d, yyyy h:mm a'
+              )}
+            </span>
+          ) : (
+            <span className="max-w-[300px] truncate font-light text-muted-foreground">
+              No interactions yet
+            </span>
+          )}
         </div>
       );
     },
@@ -104,8 +108,8 @@ export const columns: ColumnDef<Contact>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex w-[100px] items-center">
-          <span>{row.getValue('notes')}</span>
+        <div className="flex w-[250px] max-w-[500px] items-center truncate">
+          <span>{row.getValue('notes') ?? '-'}</span>
         </div>
       );
     },
