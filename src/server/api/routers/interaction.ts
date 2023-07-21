@@ -14,6 +14,7 @@ export const interactionRouter = createTRPCRouter({
       const userId = ctx.session.user.id;
       return await ctx.prisma.interaction.findMany({
         where: { userId },
+        orderBy: { date: 'desc' },
       });
     }),
 
@@ -23,10 +24,6 @@ export const interactionRouter = createTRPCRouter({
         contactId: z.string().uuid(),
         page: z.number().int().min(1).optional().default(1),
         pageSize: z.number().int().min(1).optional().default(10),
-        orderBy: z
-          .enum(['fullName', 'lastInteraction', 'notes'])
-          .optional()
-          .default('fullName'),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -34,7 +31,7 @@ export const interactionRouter = createTRPCRouter({
 
       return await ctx.prisma.interaction.findMany({
         where: { userId, contactId: input.contactId },
-        orderBy: { [input.orderBy]: 'asc' },
+        orderBy: { date: 'desc' },
       });
     }),
 
