@@ -82,6 +82,15 @@ const Interactions: NextPage = (_) => {
                     <>
                       <h1>{format(date, 'MMM dd, yyyy')}</h1>
                       {interactions
+                        .filter(
+                          (interaction) =>
+                            interaction.notes
+                              ?.toLowerCase()
+                              .includes(search.toLowerCase()) ||
+                            interaction.contact.fullName
+                              .toLowerCase()
+                              .includes(search.toLowerCase())
+                        )
                         .filter((int) => compareDates(date, int.date))
                         .map((int) => (
                           <InteractionCard
