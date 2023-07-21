@@ -81,6 +81,9 @@ export function Sidebar({ className }: SidebarProps) {
     shouldFocusError: true,
   });
 
+  const authSession = useSession();
+  if (authSession.status === 'unauthenticated') void router.push('/sign-in');
+
   const ctx = api.useContext();
   const { mutate, isLoading: isCreatingGroup } = api.group.create.useMutation();
   const onSubmit = (data: GroupFormValues) => {
