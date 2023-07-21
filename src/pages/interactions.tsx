@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { MoreVertical } from 'lucide-react';
 import { Command, CommandInput } from '@/components/ui/command';
 import { highlightText } from '@/lib/helper';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Interactions: NextPage = (_) => {
   const session = useSession();
@@ -79,7 +80,7 @@ const Interactions: NextPage = (_) => {
                 )
                 .map((date) => {
                   return (
-                    <>
+                    <span key={date.getTime()} className="flex flex-col gap-4">
                       <h1>{format(date, 'MMM dd, yyyy')}</h1>
                       {interactions
                         .filter(
@@ -99,7 +100,7 @@ const Interactions: NextPage = (_) => {
                             search={search}
                           />
                         ))}
-                    </>
+                    </span>
                   );
                 })
             ) : (
@@ -130,17 +131,32 @@ const InteractionCard = ({
 }) => {
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between p-4">
-        <CardTitle className="flex items-baseline gap-2 text-sm">
+      <CardHeader className="relative flex flex-row justify-between p-4">
+        <div className="flex items-baseline gap-2 text-sm font-semibold leading-none tracking-tight">
+          <Avatar className="h-5 w-5">
+            <AvatarImage src={contact.avatar ?? undefined} />
+            <AvatarFallback>
+              {/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */}
+              {`${contact.fullName}`
+                .split(' ')
+                .map((n) => n[0])
+                .filter((_, index) => index < 1)
+                .join('')}
+            </AvatarFallback>
+          </Avatar>
           <h1>{highlightText(contact.fullName, search)}</h1>
           {' · '}
           <h1 className="font-medium text-muted-foreground">{type.name}</h1>
           <h1 className="text-xs font-light text-muted-foreground">
             {format(date, 'hh:mm a')}
           </h1>
-        </CardTitle>
-        <Button size="icon" variant="ghost">
-          <MoreVertical />
+        </div>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="absolute right-2 top-2 h-6 w-6"
+        >
+          <MoreVertical className="h-4 w-4" />
         </Button>
       </CardHeader>
       <CardContent className="px-4 pb-4">
