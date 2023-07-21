@@ -148,7 +148,7 @@ model Config {
     id             String    @id @default(uuid())
     reminderEmails Boolean   @default(false)
     keepInTouch    Boolean   @default(false)
-    timezoneId     String?
+    timezoneId     Int?
     timezone       Timezone? @relation(fields: [timezoneId], references: [id])
 
     userId String? @unique
@@ -162,10 +162,10 @@ model Config {
 }
 
 model Timezone {
-    id        String @id @default(uuid())
+    id        Int    @id
     name      String
     nameShort String
-    offset    String
+    offset    Float
 
     configs Config[]
 

@@ -18,3 +18,7 @@ export function highlightText(text: string, highlight: string) {
     </span>
   );
 }
+
+export type PickAndFlatten<T> = {
+  [K in keyof T]: T[K];
+} & unknown;

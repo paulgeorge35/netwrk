@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Note"
+    },
+    {
+        "name": "Phone"
+    },
+    {
+        "name": "Email"
+    },
+    {
+        "name": "In Person"
+    },
+    {
+        "name": "Video Call"
+    }
+]
