@@ -10,12 +10,10 @@ export const contactRouter = createTRPCRouter({
         pageSize: z.number().int().min(1).optional().default(10),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx }) => {
       const userId = ctx.session.user.id;
       return await ctx.prisma.contact.findMany({
         where: { userId },
-        skip: (input.page - 1) * input.pageSize,
-        take: input.pageSize,
       });
     }),
 
@@ -36,8 +34,6 @@ export const contactRouter = createTRPCRouter({
 
       return await ctx.prisma.contact.findMany({
         where: { userId, groups: { some: { id: input.groupId } } },
-        skip: (input.page - 1) * input.pageSize,
-        take: input.pageSize,
         orderBy: { [input.orderBy]: 'asc' },
       });
     }),
@@ -55,8 +51,6 @@ export const contactRouter = createTRPCRouter({
 
       return await ctx.prisma.contact.findMany({
         where: { userId, groups: { none: { id: input.groupId } } },
-        skip: (input.page - 1) * input.pageSize,
-        take: input.pageSize,
       });
     }),
 
