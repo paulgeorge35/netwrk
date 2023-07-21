@@ -8,7 +8,7 @@ export function highlightText(text: string, highlight: string) {
           key={i}
           style={
             part.toLowerCase() === highlight.toLowerCase()
-              ? { fontWeight: 'bold' }
+              ? { fontWeight: 'bold', textDecoration: 'underline' }
               : {}
           }
         >

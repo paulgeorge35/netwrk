@@ -15,6 +15,10 @@ export const interactionRouter = createTRPCRouter({
       return await ctx.prisma.interaction.findMany({
         where: { userId },
         orderBy: { date: 'desc' },
+        include: {
+          contact: true,
+          type: true,
+        },
       });
     }),
 

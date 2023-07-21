@@ -18,3 +18,13 @@ export function fileToBase64(
     console.log('Error: ', error);
   };
 }
+
+export function compareDates(a: Date, b: Date) {
+  if (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
+    return true;
+  return false;
+}
