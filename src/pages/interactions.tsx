@@ -13,7 +13,6 @@ import React from 'react';
 import { compareDates } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { MoreVertical } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Command, CommandInput } from '@/components/ui/command';
 import { highlightText } from '@/lib/helper';
 
@@ -44,10 +43,6 @@ const Interactions: NextPage = (_) => {
             />
             <AddInteractionSheet />
           </span>
-          {/* <Input
-            placeholder="Search interactions"
-            className="my-4 h-12 max-w-[500px]"
-          /> */}
           <Command className="my-4 h-12 max-w-[500px]  border">
             <CommandInput
               value={search}
