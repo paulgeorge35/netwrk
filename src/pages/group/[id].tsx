@@ -140,7 +140,7 @@ function GroupHeader({ ...group }: GroupHeaderProps) {
   return (
     <span className="flex items-center justify-between gap-2">
       <form
-        className="flex flex-col gap-1 pt-4"
+        className="flex flex-col gap-1 pt-3"
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={form.handleSubmit(onSubmit)}
       >
@@ -155,7 +155,7 @@ function GroupHeader({ ...group }: GroupHeaderProps) {
                     <PopoverTrigger asChild>
                       <Input
                         type="button"
-                        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border-dashed border-transparent text-sm font-medium shadow-none transition-colors hover:border-blue-600 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  disabled:pointer-events-none disabled:opacity-50"
+                        className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border-dashed border-transparent text-sm font-medium shadow-none transition-colors hover:border-blue-600 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  disabled:pointer-events-none disabled:opacity-50"
                         {...field}
                       />
                     </PopoverTrigger>

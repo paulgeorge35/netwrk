@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { useSession } from 'next-auth/react';
 
 import { Sidebar } from '@/components/sidebar';
+import { AddInteractionSheet } from '@/components/sheet-add-interaction';
+import { PageHeader } from '@/components/page-header';
 
 const Interactions: NextPage = (_) => {
   const session = useSession();
@@ -17,18 +19,12 @@ const Interactions: NextPage = (_) => {
         <Sidebar className="hidden lg:block" userId={session.data?.user.id} />
         <div className="col-span-3 px-4 text-secondary-foreground lg:col-span-4 lg:border-l">
           <span className="flex items-center justify-between gap-2">
-            <span className="flex flex-col gap-1 pt-4">
-              <span className="flex items-center gap-6">
-                <h1>👋</h1>
-                <h1 className="flex max-w-xs items-center justify-center rounded-lg border-transparent py-2 text-2xl font-bold shadow-none">
-                  Interactions
-                </h1>
-              </span>
-              <h1 className="flex max-w-md items-center justify-center rounded-lg border-transparent py-1 text-sm text-gray-500 shadow-none">
-                All of your Interactions
-              </h1>
-            </span>
-            {/* <AddContactSheet /> */}
+            <PageHeader
+              icon="⏰"
+              title="Interactions"
+              subtitle="All of your Interactions"
+            />
+            <AddInteractionSheet />
           </span>
         </div>
       </main>
