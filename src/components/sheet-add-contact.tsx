@@ -134,7 +134,6 @@ export const AddContactSheet = ({
           ) => {
             const files = (e.target as HTMLInputElement).files;
             if (files && files[0]) {
-              console.log(files[0]);
               fileToBase64(files[0], (base64) => {
                 if (typeof base64 === 'string') {
                   setAvatar(base64);
@@ -167,7 +166,6 @@ export const AddContactSheet = ({
                     variant="ghost"
                     type="button"
                     onClick={() => {
-                      console.log(form.getValues());
                       form.resetField('avatar');
                       setAvatar(null);
                       if (hiddenFileInput.current)

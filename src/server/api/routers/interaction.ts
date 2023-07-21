@@ -84,8 +84,6 @@ export const interactionRouter = createTRPCRouter({
         (a, b) => b.date.getTime() - a.date.getTime()
       )[0];
 
-      console.log(lastInteraction);
-
       await ctx.prisma.contact.update({
         where: { id: contactId },
         data: {

@@ -69,7 +69,6 @@ export const contactRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
       const { groups, ...rest } = input;
-      console.log(input.avatar?.length);
       groups?.forEach((id) => {
         void (async () => {
           const group = await ctx.prisma.group.findUnique({ where: { id } });
