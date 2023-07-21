@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { type Contact } from '../data/schema';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { format } from 'date-fns';
 
 export const columns: ColumnDef<Contact>[] = [
   {
@@ -36,6 +37,10 @@ export const columns: ColumnDef<Contact>[] = [
   },
   {
     accessorKey: 'avatar',
+    enableHiding: true,
+  },
+  {
+    accessorKey: 'lastInteractionType',
     enableHiding: true,
   },
   {
@@ -81,7 +86,12 @@ export const columns: ColumnDef<Contact>[] = [
             </Badge>
           )}
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue('lastInteraction') ?? '—'}
+            {row.getValue('lastInteraction')
+              ? format(
+                  new Date(row.getValue('lastInteraction')),
+                  'MMM d, yyyy h:mm a'
+                )
+              : ''}
           </span>
         </div>
       );

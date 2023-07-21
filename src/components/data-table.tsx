@@ -42,6 +42,7 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       avatar: false,
+      lastInteractionType: false,
     });
   const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
