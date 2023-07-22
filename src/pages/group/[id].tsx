@@ -29,7 +29,8 @@ import { AlertDestructive } from '@/components/alert-destructive';
 import { useToast } from '@/components/ui/use-toast';
 import { AddContactToGroupDialog } from '@/components/dialog-add-contact-to-group';
 import { SheetContext } from '@/contexts/SheetContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 const groupUpdateSchema = z.object({
   name: z
@@ -44,16 +45,27 @@ type GroupUpdateValues = z.infer<typeof groupUpdateSchema>;
 
 const GroupPage: NextPage = (_) => {
   const router = useRouter();
+  const session = useSession();
+  // if (!router.query.id || typeof router.query.id !== 'string')
+  //   return <h1>404 - Page Not Found</h1>;
 
-  if (!router.query.id || typeof router.query.id !== 'string')
-    return <h1>404 - Page Not Found</h1>;
-
-  const { data: group, status } = api.group.getOne.useQuery(router.query.id, {
-    queryKey: ['group.getOne', router.query.id],
+  const {
+    data: group,
+    status,
+    error,
+    refetch,
+  } = api.group.getOne.useQuery(router.query.id as string, {
+    enabled: false,
+    queryKey: ['group.getOne', router.query.id as string],
     _optimisticResults: 'optimistic',
   });
 
-  if (!group && status === 'error') return <h1>404 - Page Not Found</h1>;
+  useEffect(() => {
+    if (session && router.query.id) void refetch();
+  }, [session, router.query.id, refetch]);
+
+  if (!group && status === 'error')
+    return <h1>404 - Page Not Found {error.message}</h1>;
 
   if (status === 'loading')
     return (
