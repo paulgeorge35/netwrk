@@ -74,13 +74,10 @@ export const AddInteractionSheet = () => {
     _optimisticResults: 'optimistic',
   });
 
-  const { data: contacts } = api.contact.getAll.useQuery(
-    { page: 1, pageSize: 1000 },
-    {
-      queryKey: ['contact.getAll', { page: 1, pageSize: 1000 }],
-      _optimisticResults: 'optimistic',
-    }
-  );
+  const { data: contacts } = api.contact.getAll.useQuery(undefined, {
+    queryKey: ['contact.getAll', undefined],
+    _optimisticResults: 'optimistic',
+  });
 
   const form = useForm<InteractionCreateValues>({
     resolver: zodResolver(interactionCreateSchema),
