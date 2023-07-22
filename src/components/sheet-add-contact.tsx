@@ -104,6 +104,7 @@ export const AddContactSheet = ({
           form.reset();
           setOpen(false);
           void ctx.contact.getAll.invalidate();
+          defaultGroup && void ctx.group.getOne.invalidate(defaultGroup);
         },
         onError: (err) => {
           toast({
