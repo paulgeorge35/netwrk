@@ -12,6 +12,7 @@ export function highlightText(text: string, highlight: string) {
                   fontWeight: 'bold',
                   textDecoration: 'underline',
                   backgroundColor: '#ffdf43',
+                  color: '#020817',
                 }
               : {}
           }
