@@ -218,6 +218,7 @@ function GroupHeader({ ...group }: GroupHeaderProps) {
         <AddContactSheet defaultGroup={group.id} />
         <AlertDestructive
           description="This action cannot be undone. This will permanently delete this group and remove the data from our servers"
+          button="Delete Group"
           action={() =>
             deleteGroup(group.id, {
               onSuccess: () => {
