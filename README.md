@@ -1,4 +1,4 @@
-# Netwrk
+# [Netwrk](https://netwrk.paulgeorge.dev)
 
 Netwrk is a web application (created using [T3 Stack](https://create.t3.gg/)) designed to help you manage and keep track of your real-world connections. You can create, edit, and search contacts and interactions on your account. You can also set reminders for specific dates related to a contact and create groups to aggregate contacts.
 
