@@ -63,6 +63,10 @@ export const AddInteractionSheet = () => {
     setOpen(true);
   });
 
+  useHotkeys('mod+enter', () => {
+    void form.handleSubmit(onSubmit)();
+  });
+
   const { mutate: createInteraction, isLoading } =
     api.interaction.create.useMutation();
   const { data: types } = api.interactionType.getAll.useQuery(undefined, {
@@ -276,6 +280,7 @@ export const AddInteractionSheet = () => {
               isLoading={isLoading}
             >
               Create Interaction
+              <ShortcutKeys square shortcut="⌘" />
               <ShortcutKeys square shortcut="↵" />
             </Button>
           </SheetFooter>
