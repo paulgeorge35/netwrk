@@ -14,15 +14,25 @@ import { useContext, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Home: NextPage = (_) => {
+  const session = useSession();
   const { data: contacts, refetch } = api.contact.getAll.useQuery(undefined, {
     queryKey: ['contact.getAll', undefined],
     _optimisticResults: 'optimistic',
     enabled: false,
   });
-  const session = useSession();
+  const { data: me } = api.user.me.useQuery();
+  const { mutate: init } = api.user.init.useMutation();
+
   useEffect(() => {
     if (session) void refetch();
   }, [session, refetch]);
+
+  useEffect(() => {
+    if (me && !me.config)
+      init({
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+  }, [me, init]);
   return (
     <>
       <Head>

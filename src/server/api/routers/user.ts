@@ -16,6 +16,40 @@ export const userRouter = createTRPCRouter({
     return user;
   }),
 
+  init: protectedProcedure
+    .input(
+      z.object({
+        timezone: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          config: true,
+        },
+      });
+
+      if (!user) throw new Error(`User with id ${userId} does not exist`);
+
+      if (!user.config) {
+        const timezone = await ctx.prisma.timezone.findFirst({
+          where: {
+            nameShort: input.timezone,
+          },
+        });
+        console.log(timezone);
+        return await ctx.prisma.config.create({
+          data: {
+            user: { connect: { id: userId } },
+            timezone: { connect: { id: timezone?.id } },
+          },
+        });
+      }
+      return user.config;
+    }),
+
   update: protectedProcedure
     .input(
       z.object({
