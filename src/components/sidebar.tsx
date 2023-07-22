@@ -7,20 +7,7 @@ import Picker from '@emoji-mart/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import { Separator } from '@radix-ui/react-separator';
-import {
-  Bookmark,
-  Clock,
-  Mail,
-  Phone,
-  Plus,
-  Search,
-  Settings,
-  Sparkle,
-  StickyNote,
-  User,
-  Users,
-  Video,
-} from 'lucide-react';
+import { Bookmark, Clock, Plus, Search, Settings, Users } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -60,7 +47,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { highlightText } from '@/lib/helper';
 import type { Contact, Interaction, InteractionType } from '@prisma/client';
 import { Card, CardContent, CardHeader } from './ui/card';
-import { format } from 'date-fns';
+import { InteractionCard } from './interaction-card';
 
 const groupFormSchema = z.object({
   icon: z.string({
@@ -553,52 +540,15 @@ const SearchResults = ({
         </Card>
       )}
       {contact.interactions.map((interaction) => (
-        <Card key={interaction.id}>
-          <CardHeader className="flex flex-row items-center justify-start gap-2 p-4">
-            <InteractionTypeIcon type={interaction.type.name} />
-            <span className="flex flex-col items-start">
-              <h1 className="text-sm font-bold">{interaction.type.name}</h1>
-              <h1 className="text-xs font-light text-muted-foreground">
-                {format(new Date(interaction.date), 'MMM dd, yyyy')}
-              </h1>
-            </span>
-          </CardHeader>
-          <CardContent className="px-4 pb-4">
-            <h1 className="text-sm font-light text-muted-foreground">
-              {interaction.notes && highlightText(interaction.notes, search)}
-            </h1>
-          </CardContent>
-        </Card>
+        <InteractionCard
+          key={interaction.id}
+          interaction={{
+            ...interaction,
+            contact: { ...contact },
+          }}
+          search={search}
+        />
       ))}
     </span>
   );
-};
-
-const InteractionTypeIcon = ({ type }: { type: string }) => {
-  switch (type) {
-    case 'In Person':
-      return (
-        <User className="h-9 w-9 rounded-lg bg-red-200 p-1 text-red-400" />
-      );
-    case 'Phone':
-      return (
-        <Phone className="bg-green-200-200 h-9 w-9 rounded-lg p-1 text-green-400" />
-      );
-    case 'Email':
-      return (
-        <Mail className="h-9 w-9 rounded-lg bg-orange-200 p-1 text-orange-400" />
-      );
-    case 'Video Call':
-      return (
-        <Video className="h-9 w-9 rounded-lg bg-blue-200 p-1 text-blue-400" />
-      );
-    case 'Note':
-      return (
-        <StickyNote className="h-9 w-9 rounded-lg bg-violet-200 p-1 text-violet-400" />
-      );
-    default:
-      return (
-        <Sparkle className="bg-pink-200-200 h-9 w-9 rounded-lg p-1 text-pink-400" />
-      );
-  }
 };

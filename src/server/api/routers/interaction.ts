@@ -118,7 +118,7 @@ export const interactionRouter = createTRPCRouter({
         throw new Error(`Interaction with id ${id} does not exist`);
 
       const interactionType = await ctx.prisma.interactionType.findFirst({
-        where: { id: input.typeId, userId },
+        where: { id: input.typeId, OR: [{ userId }, { userId: null }] },
       });
       if (!interactionType)
         throw new Error(

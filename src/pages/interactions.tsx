@@ -5,17 +5,12 @@ import { useSession } from 'next-auth/react';
 import { Sidebar } from '@/components/sidebar';
 import { AddInteractionSheet } from '@/components/sheet-add-interaction';
 import { PageHeader } from '@/components/page-header';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import type { InteractionType, Contact } from '@prisma/client';
 import { api } from '@/utils/api';
 import { format } from 'date-fns';
 import React from 'react';
 import { compareDates } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { MoreVertical } from 'lucide-react';
 import { Command, CommandInput } from '@/components/ui/command';
-import { highlightText } from '@/lib/helper';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { InteractionCard } from '@/components/interaction-card';
 
 const Interactions: NextPage = (_) => {
   const session = useSession();
@@ -96,8 +91,9 @@ const Interactions: NextPage = (_) => {
                         .map((int) => (
                           <InteractionCard
                             key={int.id}
-                            {...int}
+                            interaction={int}
                             search={search}
+                            editable
                           />
                         ))}
                     </span>
@@ -114,49 +110,3 @@ const Interactions: NextPage = (_) => {
 };
 
 export default Interactions;
-
-const InteractionCard = ({
-  type,
-  contact,
-  notes,
-  search,
-}: {
-  id: string;
-  type: InteractionType;
-  contact: Contact;
-  date: Date;
-  notes: string | null;
-  search: string;
-}) => {
-  return (
-    <Card>
-      <CardHeader className="relative flex flex-row justify-between p-4">
-        <div className="flex items-baseline gap-2 text-sm font-semibold leading-none tracking-tight">
-          <Avatar className="h-5 w-5 items-center justify-center border border-black bg-muted">
-            <AvatarImage src={contact.avatar ?? undefined} />
-            <AvatarFallback>
-              {`${contact.fullName}`
-                .split(' ')
-                .map((n) => n[0])
-                .filter((_, index) => index < 1)
-                .join('')}
-            </AvatarFallback>
-          </Avatar>
-          <h1>{highlightText(contact.fullName, search)}</h1>
-          {' · '}
-          <h1 className="font-medium text-muted-foreground">{type.name}</h1>
-        </div>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="absolute right-2 top-2 h-6 w-6"
-        >
-          <MoreVertical className="h-4 w-4" />
-        </Button>
-      </CardHeader>
-      <CardContent className="px-4 pb-4">
-        <h1 className="font-light">{notes && highlightText(notes, search)}</h1>
-      </CardContent>
-    </Card>
-  );
-};
