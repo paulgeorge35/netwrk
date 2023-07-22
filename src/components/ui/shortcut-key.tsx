@@ -9,7 +9,7 @@ export const ShortcutKeys = ({
 }) => (
   <span
     className={cn(
-      'min-w-5 flex h-5 items-center justify-center rounded border px-1 text-xs',
+      'min-w-5 flex h-5 items-center justify-center rounded border px-1 font-mono text-xs',
       square ? 'aspect-square' : 'aspect-auto'
     )}
   >

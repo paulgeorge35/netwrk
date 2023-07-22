@@ -180,7 +180,11 @@ export function Sidebar({ className }: SidebarProps) {
                 <Search className="mr-2 h-4 w-4" />
                 Search
               </span>
-              <ShortcutKeys shortcut="⌘ + /" />
+              {/* <ShortcutKeys square shortcut="⌘ + /" /> */}
+              <span className="flex gap-1">
+                <ShortcutKeys square shortcut="⌘" />
+                <ShortcutKeys square shortcut="/" />
+              </span>
             </Button>
             <Button
               type="button"
