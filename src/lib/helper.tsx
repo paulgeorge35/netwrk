@@ -9,8 +9,8 @@ export function highlightText(text: string, highlight: string) {
           style={
             part.toLowerCase() === highlight.toLowerCase()
               ? {
-                  fontWeight: 'bold',
-                  textDecoration: 'underline',
+                  // fontWeight: 'bold',
+                  // textDecoration: 'underline',
                   backgroundColor: '#ffdf43',
                   color: '#020817',
                 }
