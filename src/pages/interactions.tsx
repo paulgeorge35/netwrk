@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { Sidebar } from '@/components/sidebar';
 import { AddInteractionSheet } from '@/components/sheet-add-interaction';
 import { PageHeader } from '@/components/page-header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { InteractionType, Contact } from '@prisma/client';
 import { api } from '@/utils/api';
 import { format } from 'date-fns';
@@ -118,7 +118,6 @@ export default Interactions;
 const InteractionCard = ({
   type,
   contact,
-  date,
   notes,
   search,
 }: {
@@ -133,10 +132,9 @@ const InteractionCard = ({
     <Card>
       <CardHeader className="relative flex flex-row justify-between p-4">
         <div className="flex items-baseline gap-2 text-sm font-semibold leading-none tracking-tight">
-          <Avatar className="h-5 w-5">
+          <Avatar className="h-5 w-5 items-center justify-center bg-muted">
             <AvatarImage src={contact.avatar ?? undefined} />
             <AvatarFallback>
-              {/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */}
               {`${contact.fullName}`
                 .split(' ')
                 .map((n) => n[0])
@@ -147,9 +145,6 @@ const InteractionCard = ({
           <h1>{highlightText(contact.fullName, search)}</h1>
           {' · '}
           <h1 className="font-medium text-muted-foreground">{type.name}</h1>
-          <h1 className="text-xs font-light text-muted-foreground">
-            {format(date, 'hh:mm a')}
-          </h1>
         </div>
         <Button
           size="icon"

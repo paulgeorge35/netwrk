@@ -69,6 +69,8 @@ export const userRouter = createTRPCRouter({
               userId,
               OR: [
                 { fullName: { contains: input } },
+                { phone: { contains: input } },
+                { email: { contains: input } },
                 { notes: { contains: input } },
                 {
                   interactions: {
@@ -80,7 +82,11 @@ export const userRouter = createTRPCRouter({
               ],
             },
             include: {
-              interactions: true,
+              interactions: {
+                include: {
+                  type: true,
+                },
+              },
             },
           })
           .then((contacts) =>

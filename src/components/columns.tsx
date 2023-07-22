@@ -52,7 +52,7 @@ export const columns: ColumnDef<Contact>[] = [
       return (
         <div className="flex w-[200px] items-center">
           <span className="flex items-center gap-2">
-            <Avatar className="h-5 w-5">
+            <Avatar className="h-5 w-5 items-center justify-center bg-muted">
               <AvatarImage src={row.getValue('avatar')} />
               <AvatarFallback>
                 {/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */}

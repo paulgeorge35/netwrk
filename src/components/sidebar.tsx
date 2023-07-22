@@ -7,7 +7,20 @@ import Picker from '@emoji-mart/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import { Separator } from '@radix-ui/react-separator';
-import { Bookmark, Clock, Plus, Search, Settings, Users } from 'lucide-react';
+import {
+  Bookmark,
+  Clock,
+  Mail,
+  Phone,
+  Plus,
+  Search,
+  Settings,
+  Sparkle,
+  StickyNote,
+  User,
+  Users,
+  Video,
+} from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -39,9 +52,15 @@ import {
   FormLabel,
   FormMessage,
 } from './react-hook-form/form';
-import { Avatar } from './ui/avatar';
+import { Avatar, AvatarImage } from './ui/avatar';
 import { Skeleton } from './ui/skeleton';
 import { useToast } from './ui/use-toast';
+import { ShortcutKeys } from './ui/shortcut-key';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { highlightText } from '@/lib/helper';
+import type { Contact, Interaction, InteractionType } from '@prisma/client';
+import { Card, CardContent, CardHeader } from './ui/card';
+import { format } from 'date-fns';
 
 const groupFormSchema = z.object({
   icon: z.string({
@@ -70,10 +89,20 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function Sidebar({ className }: SidebarProps) {
   const { toast } = useToast();
+  const [search, setSearch] = useState<string>('');
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [contactIndex, setContactIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { data } = useSession();
+
+  const { data: searchResults } = api.user.search.useQuery(search, {
+    enabled: search.length > 0,
+    _optimisticResults: 'optimistic',
+    queryKey: ['user.search', search],
+  });
+
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues,
@@ -101,6 +130,10 @@ export function Sidebar({ className }: SidebarProps) {
       },
     });
   };
+
+  useHotkeys('mod+/', () => {
+    setIsSearchOpen(true);
+  });
 
   const navigateTo = (path: string) => {
     router.push(path).catch((err) => console.error(err));
@@ -136,9 +169,18 @@ export function Sidebar({ className }: SidebarProps) {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <Button variant="ghost" size="sm" className="w-full justify-start">
-              <Search className="mr-2 h-4 w-4" />
-              Search
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsSearchOpen(true)}
+              size="sm"
+              className="w-full justify-between"
+            >
+              <span className="flex justify-start">
+                <Search className="mr-2 h-4 w-4" />
+                Search
+              </span>
+              <ShortcutKeys shortcut="⌘ + /" />
             </Button>
             <Button
               type="button"
@@ -304,8 +346,241 @@ export function Sidebar({ className }: SidebarProps) {
                   ))}
             </div>
           </ScrollArea>
+          <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <DialogContent floating className="w-[800px] lg:max-w-[50vw]">
+              <Input
+                search
+                className="h-12 w-full"
+                searchClassName={cn(
+                  searchResults && searchResults.length > 0 && 'rounded-b-none'
+                )}
+                placeholder="Search through everything"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setContactIndex(0);
+                }}
+              />
+              {searchResults && searchResults.length > 0 && (
+                <div className="flex">
+                  <div className="flex w-[50%] flex-col gap-1">
+                    {searchResults.map((contact, i) => (
+                      <a
+                        key={contact.id}
+                        role="button"
+                        className={cn(
+                          'flex items-center justify-between p-2 hover:bg-muted',
+                          contactIndex === i && 'bg-muted'
+                        )}
+                        onMouseOver={() => setContactIndex(i)}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <Avatar className="h-5 w-5 items-center justify-center bg-muted">
+                            <AvatarImage src={contact.avatar ?? undefined} />
+                            <AvatarFallback className="text-center">
+                              {/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */}
+                              {`${contact.fullName}`.slice(0, 1)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <h1>{highlightText(contact.fullName, search)}</h1>
+                        </span>
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          {`${
+                            contact.fullName
+                              .toLowerCase()
+                              .includes(search.toLowerCase()) ||
+                            contact.email
+                              ?.toLowerCase()
+                              .includes(search.toLowerCase()) ||
+                            contact.phone
+                              ?.toLowerCase()
+                              .includes(search.toLowerCase()) ||
+                            contact.notes
+                              ?.toLowerCase()
+                              .includes(search.toLowerCase())
+                              ? contact.interactions.length + 1
+                              : contact.interactions.length
+                          }
+                          matches`}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                  <div className="flex w-[50%] flex-col gap-1 bg-muted/50 p-3">
+                    {searchResults && (
+                      <SearchResults
+                        contact={searchResults[contactIndex]}
+                        search={search}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
   );
 }
+type InteractionWithTypes = Interaction & { type: InteractionType };
+type ContactWithInteractions = Contact & {
+  interactions: InteractionWithTypes[];
+};
+
+const SearchResults = ({
+  contact,
+  search,
+}: {
+  contact: ContactWithInteractions | undefined;
+  search: string;
+}) => {
+  if (!contact) return null;
+  const matchesContact =
+    contact.fullName.toLowerCase().includes(search.toLowerCase()) ||
+    contact.email?.toLowerCase().includes(search.toLowerCase()) ||
+    contact.phone?.toLowerCase().includes(search.toLowerCase()) ||
+    contact.notes?.toLowerCase().includes(search.toLowerCase());
+  return (
+    <span className="flex flex-col gap-3">
+      {matchesContact && (
+        <Card>
+          <CardHeader className="relative flex flex-row justify-between p-4 pb-2">
+            <div className="flex items-center gap-2 text-sm font-semibold leading-none tracking-tight">
+              <Avatar className="h-5 w-5 items-center justify-center bg-muted">
+                <AvatarImage src={contact.avatar ?? undefined} />
+                <AvatarFallback>
+                  {`${contact.fullName}`.slice(0, 1)}
+                </AvatarFallback>
+              </Avatar>
+              <h1>{highlightText(contact.fullName, search)}</h1>
+            </div>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2 px-4 pb-4">
+            <span
+              className={cn(
+                'text-sm text-muted-foreground underline underline-offset-4',
+                !contact.fullName
+                  .toLowerCase()
+                  .includes(search.toLowerCase()) && 'hidden'
+              )}
+            >
+              Name
+            </span>
+            <h1
+              className={cn(
+                'text-sm text-muted-foreground',
+                !contact.fullName
+                  .toLowerCase()
+                  .includes(search.toLowerCase()) && 'hidden'
+              )}
+            >
+              {highlightText(contact.fullName, search)}
+            </h1>
+            <span
+              className={cn(
+                'text-sm text-muted-foreground underline underline-offset-4',
+                !contact.phone?.toLowerCase().includes(search.toLowerCase()) &&
+                  'hidden'
+              )}
+            >
+              Phone
+            </span>
+            <h1
+              className={cn(
+                'text-sm text-muted-foreground',
+                !contact.phone?.toLowerCase().includes(search.toLowerCase()) &&
+                  'hidden'
+              )}
+            >
+              {contact.phone && highlightText(contact.phone, search)}
+            </h1>
+            <span
+              className={cn(
+                'text-sm text-muted-foreground underline underline-offset-4',
+                !contact.email?.toLowerCase().includes(search.toLowerCase()) &&
+                  'hidden'
+              )}
+            >
+              Email
+            </span>
+            <h1
+              className={cn(
+                'text-sm text-muted-foreground',
+                !contact.email?.toLowerCase().includes(search.toLowerCase()) &&
+                  'hidden'
+              )}
+            >
+              {contact.email && highlightText(contact.email, search)}
+            </h1>
+            <span
+              className={cn(
+                'text-sm text-muted-foreground underline underline-offset-4',
+                !contact.notes?.toLowerCase().includes(search.toLowerCase()) &&
+                  'hidden'
+              )}
+            >
+              Notes
+            </span>
+            <h1
+              className={cn(
+                'text-sm text-muted-foreground',
+                !contact.notes?.toLowerCase().includes(search.toLowerCase()) &&
+                  'hidden'
+              )}
+            >
+              {contact.notes && highlightText(contact.notes, search)}
+            </h1>
+          </CardContent>
+        </Card>
+      )}
+      {contact.interactions.map((interaction) => (
+        <Card key={interaction.id}>
+          <CardHeader className="flex flex-row items-center justify-start gap-2 p-4">
+            <InteractionTypeIcon type={interaction.type.name} />
+            <span className="flex flex-col items-start">
+              <h1 className="text-sm font-bold">{interaction.type.name}</h1>
+              <h1 className="text-xs font-light text-muted-foreground">
+                {format(new Date(interaction.date), 'MMM dd, yyyy')}
+              </h1>
+            </span>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <h1 className="text-sm font-light text-muted-foreground">
+              {interaction.notes && highlightText(interaction.notes, search)}
+            </h1>
+          </CardContent>
+        </Card>
+      ))}
+    </span>
+  );
+};
+
+const InteractionTypeIcon = ({ type }: { type: string }) => {
+  switch (type) {
+    case 'In Person':
+      return (
+        <User className="h-9 w-9 rounded-lg bg-red-200 p-1 text-red-400" />
+      );
+    case 'Phone':
+      return (
+        <Phone className="bg-green-200-200 h-9 w-9 rounded-lg p-1 text-green-400" />
+      );
+    case 'Email':
+      return (
+        <Mail className="h-9 w-9 rounded-lg bg-orange-200 p-1 text-orange-400" />
+      );
+    case 'Video Call':
+      return (
+        <Video className="h-9 w-9 rounded-lg bg-blue-200 p-1 text-blue-400" />
+      );
+    case 'Note':
+      return (
+        <StickyNote className="h-9 w-9 rounded-lg bg-violet-200 p-1 text-violet-400" />
+      );
+    default:
+      return (
+        <Sparkle className="bg-pink-200-200 h-9 w-9 rounded-lg p-1 text-pink-400" />
+      );
+  }
+};
