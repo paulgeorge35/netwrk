@@ -252,15 +252,11 @@ export const InteractionCard = ({
             </span>
           </span>
         ) : (
-          <div className="flex items-baseline gap-2 text-sm font-semibold leading-none tracking-tight">
+          <div className="flex items-center gap-2 text-sm font-semibold leading-none tracking-tight">
             <Avatar className="h-5 w-5 items-center justify-center border border-black bg-muted">
               <AvatarImage src={interaction.contact.avatar ?? undefined} />
               <AvatarFallback>
-                {`${interaction.contact.fullName}`
-                  .split(' ')
-                  .map((n) => n[0])
-                  .filter((_, index) => index < 1)
-                  .join('')}
+                {`${interaction.contact.fullName}`.slice(0, 1)}
               </AvatarFallback>
             </Avatar>
             <h1>
