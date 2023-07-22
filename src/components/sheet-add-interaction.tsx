@@ -44,7 +44,7 @@ import {
 
 const interactionCreateSchema = z.object({
   date: z.date(),
-  notes: z.string().max(250).optional(),
+  notes: z.string().max(1500).optional(),
   typeId: z.string(),
   contactId: z.string(),
 });

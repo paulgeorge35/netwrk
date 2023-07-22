@@ -48,7 +48,7 @@ import { cn } from '@/lib/utils';
 const interactionUpdateSchema = z.object({
   id: z.string().uuid(),
   date: z.date(),
-  notes: z.string().max(250).optional(),
+  notes: z.string().max(1500).optional(),
   typeId: z.string().uuid(),
 });
 

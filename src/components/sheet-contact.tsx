@@ -36,7 +36,7 @@ const personUpdateSchema = z.object({
   fullName: z.string().max(50),
   firstMet: z.date().optional(),
   avatar: z.string().optional(),
-  notes: z.string().max(250).optional(),
+  notes: z.string().max(1500).optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
   groups: z.array(z.string().uuid()).optional(),

@@ -74,7 +74,7 @@ model Contact {
     id                  String    @id @default(uuid())
     fullName            String
     firstMet            DateTime?
-    notes               String?
+    notes               String?   @db.Text
     email               String?
     phone               String?
     lastInteraction     DateTime?
@@ -113,7 +113,7 @@ model Group {
 model Interaction {
     id    String   @id @default(uuid())
     date  DateTime
-    notes String?
+    notes String?  @db.Text
 
     typeId    String
     type      InteractionType @relation(fields: [typeId], references: [id])
