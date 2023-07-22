@@ -132,7 +132,7 @@ const InteractionCard = ({
     <Card>
       <CardHeader className="relative flex flex-row justify-between p-4">
         <div className="flex items-baseline gap-2 text-sm font-semibold leading-none tracking-tight">
-          <Avatar className="h-5 w-5 items-center justify-center bg-muted">
+          <Avatar className="h-5 w-5 items-center justify-center border border-black bg-muted">
             <AvatarImage src={contact.avatar ?? undefined} />
             <AvatarFallback>
               {`${contact.fullName}`

@@ -356,14 +356,28 @@ export function Sidebar({ className }: SidebarProps) {
                 )}
                 placeholder="Search through everything"
                 value={search}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    searchResults &&
+                      setContactIndex((i) => (i + 1) % searchResults.length);
+                  } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    searchResults &&
+                      setContactIndex(
+                        (i) =>
+                          (i - 1 + searchResults.length) % searchResults.length
+                      );
+                  }
+                }}
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setContactIndex(0);
                 }}
               />
               {searchResults && searchResults.length > 0 && (
-                <div className="flex">
-                  <div className="flex w-[50%] flex-col gap-1">
+                <div className="flex h-[300px]">
+                  <div className="flex h-full w-[50%] flex-col gap-1 overflow-auto">
                     {searchResults.map((contact, i) => (
                       <a
                         key={contact.id}
@@ -406,7 +420,7 @@ export function Sidebar({ className }: SidebarProps) {
                       </a>
                     ))}
                   </div>
-                  <div className="flex w-[50%] flex-col gap-1 bg-muted/50 p-3">
+                  <div className="flex h-full w-[50%] flex-col gap-1 overflow-y-auto bg-muted/50 p-3">
                     {searchResults && (
                       <SearchResults
                         contact={searchResults[contactIndex]}

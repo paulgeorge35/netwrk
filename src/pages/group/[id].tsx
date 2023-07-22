@@ -27,6 +27,7 @@ import { columns } from '@/components/columns';
 import { AddContactSheet } from '@/components/sheet-add-contact';
 import { AlertDestructive } from '@/components/alert-destructive';
 import { useToast } from '@/components/ui/use-toast';
+import { AddContactToGroupDialog } from '@/components/dialog-add-contact-to-group';
 
 const groupUpdateSchema = z.object({
   name: z
@@ -215,6 +216,7 @@ function GroupHeader({ ...group }: GroupHeaderProps) {
         />
       </form>
       <span className="flex gap-4">
+        <AddContactToGroupDialog defaultGroup={group.id} />
         <AddContactSheet defaultGroup={group.id} />
         <AlertDestructive
           description="This action cannot be undone. This will permanently delete this group and remove the data from our servers"

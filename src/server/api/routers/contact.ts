@@ -42,15 +42,18 @@ export const contactRouter = createTRPCRouter({
     .input(
       z.object({
         groupId: z.string().uuid(),
-        page: z.number().int().min(1).optional().default(1),
-        pageSize: z.number().int().min(1).optional().default(10),
+        search: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
       return await ctx.prisma.contact.findMany({
-        where: { userId, groups: { none: { id: input.groupId } } },
+        where: {
+          userId,
+          groups: { none: { id: input.groupId } },
+          fullName: { contains: input.search },
+        },
       });
     }),
 
