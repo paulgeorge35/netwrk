@@ -10,17 +10,19 @@ import { api } from '@/utils/api';
 import { PageHeader } from '@/components/page-header';
 import { SheetContext } from '@/contexts/SheetContext';
 import { type Contact } from '@prisma/client';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Home: NextPage = (_) => {
-  const { data: contacts } = api.contact.getAll.useQuery(
-    {},
-    {
-      queryKey: ['contact.getAll', {}],
-      _optimisticResults: 'optimistic',
-    }
-  );
+  const { data: contacts, refetch } = api.contact.getAll.useQuery(undefined, {
+    queryKey: ['contact.getAll', undefined],
+    _optimisticResults: 'optimistic',
+    enabled: false,
+  });
   const session = useSession();
+  useEffect(() => {
+    if (session) void refetch();
+  }, [session, refetch]);
   return (
     <>
       <Head>
@@ -40,6 +42,7 @@ const Home: NextPage = (_) => {
             <AddContactSheet />
           </span>
           {contacts && <HomeBody contacts={contacts} />}
+          {!contacts && <Skeleton className="mt-4 h-[50vh] w-full" />}
         </div>
       </main>
     </>

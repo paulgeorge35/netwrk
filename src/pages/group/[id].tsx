@@ -88,6 +88,7 @@ const GroupPage: NextPage = (_) => {
                 <Skeleton className="h-8 w-full max-w-md font-normal" />
               </div>
             </div>
+            <Skeleton className="mt-4 h-[50vh] w-full" />
           </div>
         </main>
       </>

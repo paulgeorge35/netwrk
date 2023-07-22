@@ -26,19 +26,12 @@ export const contactRouter = createTRPCRouter({
       return contact;
     }),
 
-  getAll: protectedProcedure
-    .input(
-      z.object({
-        page: z.number().int().min(1).optional().default(1),
-        pageSize: z.number().int().min(1).optional().default(10),
-      })
-    )
-    .query(async ({ ctx }) => {
-      const userId = ctx.session.user.id;
-      return await ctx.prisma.contact.findMany({
-        where: { userId },
-      });
-    }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    return await ctx.prisma.contact.findMany({
+      where: { userId },
+    });
+  }),
 
   getAllByGroupId: protectedProcedure
     .input(
