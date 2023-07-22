@@ -46,13 +46,10 @@ type GroupUpdateValues = z.infer<typeof groupUpdateSchema>;
 const GroupPage: NextPage = (_) => {
   const router = useRouter();
   const session = useSession();
-  // if (!router.query.id || typeof router.query.id !== 'string')
-  //   return <h1>404 - Page Not Found</h1>;
 
   const {
     data: group,
     status,
-    error,
     refetch,
   } = api.group.getOne.useQuery(router.query.id as string, {
     enabled: false,
@@ -65,7 +62,11 @@ const GroupPage: NextPage = (_) => {
   }, [session, router.query.id, refetch]);
 
   if (!group && status === 'error')
-    return <h1>404 - Page Not Found {error.message}</h1>;
+    return (
+      <span className="flex h-screen w-screen items-center justify-center">
+        <h1 className="text-lg font-bold">404 - Page Not Found</h1>
+      </span>
+    );
 
   if (status === 'loading')
     return (
