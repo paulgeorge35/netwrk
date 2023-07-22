@@ -547,6 +547,7 @@ const SearchResults = ({
             contact: { ...contact },
           }}
           search={search}
+          solo
         />
       ))}
     </span>

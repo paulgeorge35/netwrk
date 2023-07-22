@@ -324,7 +324,7 @@ const InteractionTypeIcon = ({ type }: { type: string }) => {
       );
     case 'Phone':
       return (
-        <Phone className="bg-green-200-200 h-9 w-9 rounded-lg p-1 text-green-400" />
+        <Phone className="h-9 w-9 rounded-lg bg-green-200 p-1 text-green-400" />
       );
     case 'Email':
       return (
