@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -79,6 +79,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+  const session = useSession();
   const { toast } = useToast();
   const [search, setSearch] = useState<string>('');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
@@ -131,8 +132,17 @@ export function Sidebar({ className }: SidebarProps) {
     router.push(path).catch((err) => console.error(err));
   };
 
-  const { data: groups, isLoading: isLoadingGroups } =
-    api.group.getAll.useQuery();
+  const {
+    data: groups,
+    refetch,
+    isLoading: isLoadingGroups,
+  } = api.group.getAll.useQuery(undefined, {
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (session) void refetch();
+  }, [session, refetch]);
 
   return (
     <div className={cn('pb-12', className)}>
