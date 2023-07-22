@@ -8,6 +8,9 @@ import { DataTable } from '@/components/data-table';
 import { columns } from '@/components/columns';
 import { api } from '@/utils/api';
 import { PageHeader } from '@/components/page-header';
+import { SheetContext } from '@/contexts/SheetContext';
+import { type Contact } from '@prisma/client';
+import { useContext } from 'react';
 
 const Home: NextPage = (_) => {
   const { data: contacts } = api.contact.getAll.useQuery(
@@ -36,10 +39,20 @@ const Home: NextPage = (_) => {
             />
             <AddContactSheet />
           </span>
-          {contacts && <DataTable data={contacts} columns={columns} />}
+          {contacts && <HomeBody contacts={contacts} />}
         </div>
       </main>
     </>
+  );
+};
+const HomeBody = ({ contacts }: { contacts: Contact[] }) => {
+  const { contact } = useContext(SheetContext);
+  return (
+    <DataTable
+      data={contacts}
+      columns={columns}
+      onRowClick={(id: string) => contact.setId(id)}
+    />
   );
 };
 

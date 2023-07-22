@@ -9,6 +9,7 @@ import { SessionProvider } from 'next-auth/react';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { SidebarContextProvider } from '@/contexts/SheetContext';
 
 export { reportWebVitals } from 'next-axiom';
 
@@ -18,11 +19,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <SessionProvider session={session}>
-          <Component {...pageProps} />
-        </SessionProvider>
-      </ThemeProvider>
+      <SidebarContextProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <SessionProvider session={session}>
+            <Component {...pageProps} />
+          </SessionProvider>
+        </ThemeProvider>
+      </SidebarContextProvider>
       <Toaster />
       <Analytics />
     </>

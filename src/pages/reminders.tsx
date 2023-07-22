@@ -23,7 +23,6 @@ const Reminders: NextPage = (_) => {
               title="Reminders"
               subtitle="All of your Reminders"
             />
-            {/* <AddContactSheet /> */}
           </span>
         </div>
       </main>

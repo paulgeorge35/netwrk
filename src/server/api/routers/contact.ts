@@ -3,6 +3,29 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const contactRouter = createTRPCRouter({
+  getById: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      const contact = await ctx.prisma.contact.findFirst({
+        where: { id: input.id, userId },
+        include: {
+          groups: true,
+          interactions: {
+            include: {
+              type: true,
+            },
+          },
+        },
+      });
+
+      if (!contact)
+        throw new Error(`Contact with id ${input.id} does not exist`);
+
+      return contact;
+    }),
+
   getAll: protectedProcedure
     .input(
       z.object({
@@ -94,14 +117,16 @@ export const contactRouter = createTRPCRouter({
         id: z.string().uuid(),
         fullName: z.string().max(50).optional(),
         firstMet: z.date().optional(),
+        avatar: z.string().optional(),
         notes: z.string().max(250).optional(),
         email: z.string().email().optional(),
         phone: z.string().optional(),
+        groups: z.array(z.string().uuid()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      const { id, ...rest } = input;
+      const { id, groups, ...rest } = input;
 
       const contact = await ctx.prisma.contact.findFirst({
         where: { id, userId },
@@ -112,6 +137,9 @@ export const contactRouter = createTRPCRouter({
         where: { id },
         data: {
           ...rest,
+          groups: {
+            connect: groups?.map((id) => ({ id })),
+          },
         },
       });
     }),

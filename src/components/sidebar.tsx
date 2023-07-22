@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -48,6 +48,8 @@ import { highlightText } from '@/lib/helper';
 import type { Contact, Interaction, InteractionType } from '@prisma/client';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { InteractionCard } from './interaction-card';
+import { ContactSheet } from './sheet-contact';
+import { SheetContext } from '@/contexts/SheetContext';
 
 const groupFormSchema = z.object({
   icon: z.string({
@@ -72,6 +74,8 @@ const defaultValues: GroupFormValues = {
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   userId?: string;
+  contact?: string;
+  setContact?: (contact?: string) => void;
 }
 
 export function Sidebar({ className }: SidebarProps) {
@@ -83,6 +87,7 @@ export function Sidebar({ className }: SidebarProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { data } = useSession();
+  const { contact } = useContext(SheetContext);
 
   const { data: searchResults } = api.user.search.useQuery(search, {
     enabled: search.length > 0,
@@ -131,6 +136,13 @@ export function Sidebar({ className }: SidebarProps) {
 
   return (
     <div className={cn('pb-12', className)}>
+      {contact.id && (
+        <ContactSheet
+          id={contact.id}
+          open={contact.isOpen}
+          onOpenChange={contact.setIsOpen}
+        />
+      )}
       <div className="space-y-4 py-4">
         <div className="px-4 py-2">
           <Link href="/">

@@ -25,7 +25,7 @@ export function AlertDestructive({
   button?: string;
   solo?: boolean;
   open?: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
   action: () => void;
 }) {
   return (

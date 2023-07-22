@@ -27,16 +27,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import type { Contact } from '@prisma/client';
+
 import { DataTablePagination } from '../components/data-table-pagination';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onRowClick?: (id: string) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -86,7 +90,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="mt-2 space-y-4">
-      {/* <DataTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -112,6 +115,9 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  onClick={() =>
+                    onRowClick && onRowClick((row.original as Contact).id)
+                  }
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (

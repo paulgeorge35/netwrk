@@ -13,7 +13,7 @@ import {
 } from '@/components/react-hook-form/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { type Group } from '@prisma/client';
+import type { Contact, Group } from '@prisma/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Popover,
@@ -28,6 +28,8 @@ import { AddContactSheet } from '@/components/sheet-add-contact';
 import { AlertDestructive } from '@/components/alert-destructive';
 import { useToast } from '@/components/ui/use-toast';
 import { AddContactToGroupDialog } from '@/components/dialog-add-contact-to-group';
+import { SheetContext } from '@/contexts/SheetContext';
+import { useContext } from 'react';
 
 const groupUpdateSchema = z.object({
   name: z
@@ -92,7 +94,7 @@ const GroupPage: NextPage = (_) => {
         <Sidebar className="hidden lg:block" />
         <div className="col-span-3 px-4 text-secondary-foreground lg:col-span-4 lg:border-l">
           {group && <GroupHeader key={group.id} {...group} />}
-          <DataTable data={group.contacts} columns={columns} />
+          <GroupBody group={group} />
         </div>
       </main>
     </>
@@ -100,6 +102,23 @@ const GroupPage: NextPage = (_) => {
 };
 
 export default GroupPage;
+
+const GroupBody = ({
+  group,
+}: {
+  group: Group & {
+    contacts: Contact[];
+  };
+}) => {
+  const { contact } = useContext(SheetContext);
+  return (
+    <DataTable
+      data={group.contacts}
+      columns={columns}
+      onRowClick={(id: string) => contact.setId(id)}
+    />
+  );
+};
 
 type GroupHeaderProps = Group;
 
