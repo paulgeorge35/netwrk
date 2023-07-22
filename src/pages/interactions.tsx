@@ -7,20 +7,26 @@ import { AddInteractionSheet } from '@/components/sheet-add-interaction';
 import { PageHeader } from '@/components/page-header';
 import { api } from '@/utils/api';
 import { format } from 'date-fns';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { compareDates } from '@/lib/utils';
 import { Command, CommandInput } from '@/components/ui/command';
 import { InteractionCard } from '@/components/interaction-card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Interactions: NextPage = (_) => {
   const session = useSession();
   const [search, setSearch] = React.useState('');
-  const { data: interactions } = api.interaction.getAll.useQuery(
-    {},
+  const { data: interactions, refetch } = api.interaction.getAll.useQuery(
+    undefined,
     {
-      queryKey: ['interaction.getAll', {}],
+      queryKey: ['interaction.getAll', undefined],
+      enabled: false,
     }
   );
+
+  useEffect(() => {
+    if (session) void refetch();
+  }, [session, refetch]);
   return (
     <>
       <Head>
@@ -49,7 +55,12 @@ const Interactions: NextPage = (_) => {
           </Command>
 
           <span className="flex max-w-[500px] flex-col gap-4">
-            {interactions && interactions.length > 0 ? (
+            {!interactions &&
+              Array.from({ length: 5 }).map((_, index) => (
+                <InteractionCardSkeleton key={index} />
+              ))}
+            {interactions &&
+              interactions.length > 0 &&
               interactions
                 .filter(
                   (interaction) =>
@@ -98,8 +109,8 @@ const Interactions: NextPage = (_) => {
                         ))}
                     </span>
                   );
-                })
-            ) : (
+                })}
+            {interactions && interactions.length === 0 && (
               <h1>No interactions found.</h1>
             )}
           </span>
@@ -110,3 +121,10 @@ const Interactions: NextPage = (_) => {
 };
 
 export default Interactions;
+
+const InteractionCardSkeleton = () => (
+  <span className="flex flex-col gap-4">
+    <Skeleton className="h-9 w-[150px] rounded-lg" />
+    <Skeleton className="h-[150px] w-full rounded-lg" />
+  </span>
+);

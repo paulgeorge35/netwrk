@@ -3,24 +3,17 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const interactionRouter = createTRPCRouter({
-  getAll: protectedProcedure
-    .input(
-      z.object({
-        page: z.number().int().min(1).optional().default(1),
-        pageSize: z.number().int().min(1).optional().default(10),
-      })
-    )
-    .query(async ({ ctx }) => {
-      const userId = ctx.session.user.id;
-      return await ctx.prisma.interaction.findMany({
-        where: { userId },
-        orderBy: { date: 'desc' },
-        include: {
-          contact: true,
-          type: true,
-        },
-      });
-    }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    return await ctx.prisma.interaction.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      include: {
+        contact: true,
+        type: true,
+      },
+    });
+  }),
 
   getAllByContactId: protectedProcedure
     .input(
