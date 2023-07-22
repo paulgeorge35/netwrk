@@ -458,7 +458,7 @@ const SearchResults = ({
                   {`${contact.fullName}`.slice(0, 1)}
                 </AvatarFallback>
               </Avatar>
-              <h1>{highlightText(contact.fullName, search)}</h1>
+              <h1>{contact.fullName}</h1>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-2 px-4 pb-4">
