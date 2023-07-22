@@ -347,7 +347,7 @@ export function Sidebar({ className }: SidebarProps) {
             </div>
           </ScrollArea>
           <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-            <DialogContent floating className="w-[800px] lg:max-w-[50vw]">
+            <DialogContent floating className="w-[800px] gap-0 lg:max-w-[50vw]">
               <Input
                 search
                 className="h-12 w-full"
