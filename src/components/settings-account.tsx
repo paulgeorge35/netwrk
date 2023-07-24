@@ -16,7 +16,6 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useState } from 'react';
 import { api } from '@/utils/api';
-import { Separator } from './ui/separator';
 import { signOut } from 'next-auth/react';
 import { type User } from '@prisma/client';
 import { useToast } from './ui/use-toast';
@@ -32,7 +31,6 @@ export function SettingsAccount() {
       <h1 className="text-lg font-bold">Basic Info</h1>
       <Card>
         <CardContent className="pt-4">
-          {/* <AvatarFrom /> */}
           {me && <NameForm me={me} />}
           {status === 'loading' && (
             <span>
@@ -45,8 +43,6 @@ export function SettingsAccount() {
       <h1 className="text-lg font-bold">Timezone</h1>
       <Card>
         <CardContent className="pt-4">
-          {/* <AvatarFrom /> */}
-          {me && <NameForm me={me} />}
           {status === 'loading' && (
             <span>
               <Label>Timezone</Label>
