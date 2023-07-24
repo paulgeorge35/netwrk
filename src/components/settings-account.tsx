@@ -28,7 +28,8 @@ export function SettingsAccount() {
   const { data: me, status } = api.user.me.useQuery();
 
   return (
-    <TabsContent value="account">
+    <TabsContent value="account" className="flex flex-col gap-4">
+      <h1 className="text-lg font-bold">Basic Info</h1>
       <Card>
         <CardContent className="pt-4">
           {/* <AvatarFrom /> */}
@@ -39,18 +40,32 @@ export function SettingsAccount() {
               <Skeleton className="my-4 h-8 w-full max-w-sm" />
             </span>
           )}
-          <Separator orientation="horizontal" className="my-4" />
-          <Button
-            size="lg"
-            variant="destructive"
-            onClick={() => {
-              void signOut({ callbackUrl: `${env.NEXTAUTH_URL}/sign-in` });
-            }}
-          >
-            Log Out
-          </Button>
         </CardContent>
       </Card>
+      <h1 className="text-lg font-bold">Timezone</h1>
+      <Card>
+        <CardContent className="pt-4">
+          {/* <AvatarFrom /> */}
+          {me && <NameForm me={me} />}
+          {status === 'loading' && (
+            <span>
+              <Label>Timezone</Label>
+              <Skeleton className="my-4 h-8 w-full max-w-sm" />
+            </span>
+          )}
+        </CardContent>
+      </Card>
+      <span>
+        <Button
+          size="lg"
+          variant="destructive"
+          onClick={() => {
+            void signOut({ callbackUrl: `${env.NEXTAUTH_URL}/sign-in` });
+          }}
+        >
+          Log Out
+        </Button>
+      </span>
     </TabsContent>
   );
 }
