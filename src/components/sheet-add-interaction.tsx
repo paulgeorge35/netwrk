@@ -20,8 +20,8 @@ import {
 } from './react-hook-form/form';
 import { Textarea } from './ui/textarea';
 import { format } from 'date-fns';
-import { CalendarIcon, Check } from 'lucide-react';
-import React from 'react';
+import { CalendarIcon, Check, Sparkles, SpellCheck } from 'lucide-react';
+import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar } from './ui/calendar';
@@ -41,6 +41,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import Confetti from 'react-confetti-explosion';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 const interactionCreateSchema = z.object({
   date: z.date(),
@@ -50,9 +57,12 @@ const interactionCreateSchema = z.object({
 });
 
 type InteractionCreateValues = z.infer<typeof interactionCreateSchema>;
+type PromptType = 'SUMMARY' | 'SPELLING';
 
 export const AddInteractionSheet = () => {
   const { toast } = useToast();
+  const [prompt, setPrompt] = React.useState<PromptType | undefined>('SUMMARY');
+  const [confetti, setConfetti] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(false);
   const [openPop, setOpenPop] = React.useState<boolean>(false);
   const [selectedContactId, setSelectedContactId] = React.useState<
@@ -86,8 +96,40 @@ export const AddInteractionSheet = () => {
       date: new Date(),
     },
   });
+  const {
+    data: summary,
+    refetch: aiQuery,
+    isFetching,
+  } = api.ai.query.useQuery(
+    {
+      text: form.getValues('notes') || '',
+      prompt,
+    },
+    {
+      enabled: false,
+      // staleTime: 0,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      cacheTime: 0,
+    }
+  );
+
+  useEffect(() => {
+    if (summary) {
+      form.setValue('notes', summary);
+      setConfetti(true);
+    }
+  }, [form, summary]);
 
   const ctx = api.useContext();
+
+  const SubmitAIQuery = (queryPrompt: PromptType) => {
+    setPrompt(queryPrompt);
+    void aiQuery();
+  };
 
   const onSubmit = (data: InteractionCreateValues) => {
     createInteraction(
@@ -264,7 +306,51 @@ export const AddInteractionSheet = () => {
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <span className="relative">
+                      <Textarea className="min-h-[150px]" {...field} />
+                      <span className="absolute bottom-2 right-2 flex h-6 justify-end gap-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              disabled={
+                                isFetching ||
+                                !form.getValues().notes ||
+                                String(form.getValues().notes).length < 10
+                              }
+                              isLoading={isFetching}
+                              className="h-6 w-6"
+                            >
+                              <Sparkles className="h-4 w-4" />
+                              {confetti && !isFetching && (
+                                <Confetti
+                                  onComplete={() => setConfetti(false)}
+                                  height={300}
+                                  particleSize={4}
+                                  width={300}
+                                  zIndex={1000}
+                                />
+                              )}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-14">
+                            <DropdownMenuItem
+                              onClick={() => SubmitAIQuery('SUMMARY')}
+                            >
+                              <span>Summarize text</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => SubmitAIQuery('SPELLING')}
+                            >
+                              <span>Fix spelling</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setConfetti(true)}>
+                              <span>Confetti</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </span>
+                    </span>
                   </FormControl>
                 </FormItem>
               )}

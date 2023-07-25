@@ -1,7 +1,8 @@
 import { contactRouter } from './routers/contact';
 import { groupRouter } from './routers/group';
 import { interactionRouter } from './routers/interaction';
-import { interactioTypeRouter } from './routers/interactionType';
+import { interactioTypeRouter } from './routers/interaction-type';
+import { openAIRouter } from './routers/open-ai';
 import { userRouter } from './routers/user';
 import { createTRPCRouter } from './trpc';
 
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   interaction: interactionRouter,
   interactionType: interactioTypeRouter,
+  ai: openAIRouter,
 });
 
 // export type definition of API
