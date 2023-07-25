@@ -16,8 +16,8 @@ Current features include creating, editing, and searching contacts and interacti
 
 ## To follow
 
+- [x] AI-powered text interpreter and summary.
 - [ ] Reminders for specific dates and contacts
-- [ ] AI-powered text interpreter and summary.
 
 ## Getting Started
 
@@ -51,6 +51,8 @@ NEXTAUTH_URL="your_nextauth_url"
 GITHUB_CLIENT_ID="your_github_client_id"
 GITHUB_CLIENT_SECRET="your_github_client_secret"
 ```
+
+Make sure you update **env.mjs** file in case you add new environment variables.
 
 ### Run Prisma commands:
 
