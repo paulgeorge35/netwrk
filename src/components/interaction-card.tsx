@@ -92,6 +92,10 @@ export const InteractionCard = ({
             description: `Interaction deleted successfully!`,
           });
           void ctx.interaction.getAll.invalidate();
+          void ctx.interaction.getAllByContactId.invalidate({
+            contactId: interaction.contactId,
+          });
+          void ctx.contact.getById.invalidate({ id: interaction.contactId });
         },
       }
     );

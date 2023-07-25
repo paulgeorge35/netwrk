@@ -12,7 +12,7 @@ export const Chip = ({
   id: string;
   icon: string;
   name: string;
-  action: (id: string) => void;
+  action?: (id: string) => void;
   className?: string;
 }) => (
   <span
@@ -22,12 +22,14 @@ export const Chip = ({
     )}
   >
     {`${icon} ${name}`}
-    <Button
-      variant="ghost"
-      className="ml-2 h-3 w-3 p-0"
-      onClick={() => action(id)}
-    >
-      <X className="h-3 w-3" />
-    </Button>
+    {action && (
+      <Button
+        variant="ghost"
+        className="ml-2 h-3 w-3 p-0"
+        onClick={() => action(id)}
+      >
+        <X className="h-3 w-3" />
+      </Button>
+    )}
   </span>
 );

@@ -154,7 +154,7 @@ export const AddContactSheet = ({
             <span className="flex justify-center">
               {avatar ? (
                 <span className="relative">
-                  <Avatar className="h-24 w-24">
+                  <Avatar className="h-24 w-24 bg-muted">
                     <Image
                       alt="Profile Picture"
                       width={96}
@@ -220,15 +220,19 @@ export const AddContactSheet = ({
                     />
                   ))}
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    className="inline-block h-8 rounded-full border-dashed py-1 text-xs font-light hover:border-blue-500 hover:bg-transparent"
-                    variant="outline"
-                  >
-                    <Plus className="mr-2 inline-block h-3 w-3" />
-                    Add to Group
-                  </Button>
-                </DropdownMenuTrigger>
+                {groups &&
+                  groups.filter((group) => !selectedGroups.includes(group.id))
+                    .length !== 0 && (
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        className="inline-block h-8 rounded-full border-dashed py-1 text-xs font-light hover:border-blue-500 hover:bg-transparent"
+                        variant="outline"
+                      >
+                        <Plus className="mr-2 inline-block h-3 w-3" />
+                        Add to Group
+                      </Button>
+                    </DropdownMenuTrigger>
+                  )}
                 <DropdownMenuContent className="w-36">
                   {groups &&
                     groups

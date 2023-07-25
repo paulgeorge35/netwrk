@@ -131,7 +131,7 @@ export const contactRouter = createTRPCRouter({
         data: {
           ...rest,
           groups: {
-            connect: groups?.map((id) => ({ id })),
+            set: groups?.map((id) => ({ id })),
           },
         },
       });

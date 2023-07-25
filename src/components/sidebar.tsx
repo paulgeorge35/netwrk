@@ -205,7 +205,7 @@ export function Sidebar({ className }: SidebarProps) {
               <Settings className="mr-2 h-4 w-4" />
               Settings
             </Button>
-            <Button
+            {/* <Button
               type="button"
               variant={router.pathname === '/reminders' ? 'secondary' : 'ghost'}
               onClick={() => navigateTo('/reminders')}
@@ -214,7 +214,7 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <Clock className="mr-2 h-4 w-4" />
               Reminders
-            </Button>
+            </Button> */}
             <Button
               type="button"
               variant={

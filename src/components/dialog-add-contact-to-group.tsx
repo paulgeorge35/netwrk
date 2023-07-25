@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Checkbox } from './ui/checkbox';
 import { useToast } from './ui/use-toast';
-import Image from 'next/image';
 
 export function AddContactToGroupDialog({
   defaultGroup,
@@ -161,12 +160,7 @@ export function AddContactToGroupDialog({
             searchResults &&
             searchResults.length === 0 && (
               <span className="flex h-full grow flex-col items-center justify-center gap-2">
-                <Image
-                  alt="No results"
-                  width={64}
-                  height={64}
-                  src="/no-results.png"
-                />
+                <h1 className="text-[4rem]">🤕</h1>
                 <h1 className="text-lg">No contacts found</h1>
               </span>
             )}
