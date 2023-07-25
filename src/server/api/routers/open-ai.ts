@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '../trpc';
+import { createTRPCRouter } from '../trpc';
 import axios from 'axios';
 import { env } from '@/env.mjs';
+import { protectedProcedure } from '../trpc';
 const Message = z.object({
   role: z.string(),
   content: z.string(),
@@ -29,7 +30,7 @@ const openAiResponseSchema = z.object({
 });
 
 export const openAIRouter = createTRPCRouter({
-  query: publicProcedure
+  query: protectedProcedure
     .input(
       z.object({
         text: z.string(),
@@ -49,7 +50,22 @@ export const openAIRouter = createTRPCRouter({
       })
     )
     .output(z.string())
-    .query(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: userId },
+        select: { subscribed: true },
+      });
+
+      console.log(user);
+
+      if (!user) throw new Error('User not found');
+      if (!user.subscribed)
+        throw new Error(
+          'This is a paid feature. Please switch to a paid plan to use it.'
+        );
+
       const { text, prompt } = input;
       if (text === '') return text;
 

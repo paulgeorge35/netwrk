@@ -20,8 +20,8 @@ import {
 } from './react-hook-form/form';
 import { Textarea } from './ui/textarea';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, Sparkles, SpellCheck } from 'lucide-react';
-import React, { useEffect } from 'react';
+import { CalendarIcon, Check, Sparkles } from 'lucide-react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar } from './ui/calendar';
@@ -61,7 +61,6 @@ type PromptType = 'SUMMARY' | 'SPELLING';
 
 export const AddInteractionSheet = () => {
   const { toast } = useToast();
-  const [prompt, setPrompt] = React.useState<PromptType | undefined>('SUMMARY');
   const [confetti, setConfetti] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(false);
   const [openPop, setOpenPop] = React.useState<boolean>(false);
@@ -96,39 +95,28 @@ export const AddInteractionSheet = () => {
       date: new Date(),
     },
   });
-  const {
-    data: summary,
-    refetch: aiQuery,
-    isFetching,
-  } = api.ai.query.useQuery(
-    {
-      text: form.getValues('notes') || '',
-      prompt,
+  const { mutate: aiQuery, isLoading: isFetching } = api.ai.query.useMutation({
+    onSuccess: (data) => {
+      if (data && data.length > 0 && data !== form.getValues('notes')) {
+        form.setValue('notes', data);
+        setConfetti(true);
+      }
     },
-    {
-      enabled: false,
-      // staleTime: 0,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchInterval: false,
-      refetchIntervalInBackground: false,
-      cacheTime: 0,
-    }
-  );
-
-  useEffect(() => {
-    if (summary) {
-      form.setValue('notes', summary);
-      setConfetti(true);
-    }
-  }, [form, summary]);
+    onError: (err) => {
+      toast({
+        title: '❌ Error',
+        description: err.message,
+      });
+    },
+  });
 
   const ctx = api.useContext();
 
   const SubmitAIQuery = (queryPrompt: PromptType) => {
-    setPrompt(queryPrompt);
-    void aiQuery();
+    void aiQuery({
+      text: form.getValues('notes') || '',
+      prompt: queryPrompt,
+    });
   };
 
   const onSubmit = (data: InteractionCreateValues) => {
@@ -343,9 +331,6 @@ export const AddInteractionSheet = () => {
                               onClick={() => SubmitAIQuery('SPELLING')}
                             >
                               <span>Fix spelling</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setConfetti(true)}>
-                              <span>Confetti</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
