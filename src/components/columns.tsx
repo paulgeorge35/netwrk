@@ -3,7 +3,6 @@
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 
 import { type Contact } from '../data/schema';
 import { DataTableColumnHeader } from './data-table-column-header';
@@ -11,32 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { format } from 'date-fns';
 
 export const columns: ColumnDef<Contact>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value: boolean) =>
-          table.toggleAllPageRowsSelected(!!value)
-        }
-        onClick={(event) => event.stopPropagation()}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value: boolean) => row.toggleSelected(!!value)}
-        onClick={(event) => event.stopPropagation()}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableResizing: false,
-    enableHiding: false,
-  },
   {
     accessorKey: 'avatar',
     enableHiding: true,
@@ -48,7 +21,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: 'fullName',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader className="ml-2" column={column} title="Name" />
     ),
     cell: ({ row }) => {
       return (
@@ -89,10 +62,7 @@ export const columns: ColumnDef<Contact>[] = [
           )}
           {row.getValue('lastInteraction') ? (
             <span className="max-w-[300px] truncate font-medium">
-              {format(
-                new Date(row.getValue('lastInteraction')),
-                'MMM d, yyyy h:mm a'
-              )}
+              {format(new Date(row.getValue('lastInteraction')), 'MMM d, yyyy')}
             </span>
           ) : (
             <span className="max-w-[300px] truncate font-light text-muted-foreground">
