@@ -23,7 +23,7 @@ import {
 import { AlertDestructive } from './alert-destructive';
 import { api } from '@/utils/api';
 import { useToast } from './ui/use-toast';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,6 +44,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar } from './ui/calendar';
 import { Textarea } from './ui/textarea';
 import { cn } from '@/lib/utils';
+import { SheetContext } from '@/contexts/SheetContext';
 
 const interactionUpdateSchema = z.object({
   id: z.string().uuid(),
@@ -67,6 +68,7 @@ export const InteractionCard = ({
 }) => {
   const [alert, setAlert] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const { contact } = useContext(SheetContext);
   const { toast } = useToast();
   const { mutate: deleteInteraction } = api.interaction.delete.useMutation();
   const { mutate: updateInteraction, isLoading } =
@@ -259,11 +261,15 @@ export const InteractionCard = ({
                 {`${interaction.contact.fullName}`.slice(0, 1)}
               </AvatarFallback>
             </Avatar>
-            <h1>
+            <a
+              role="button"
+              onClick={() => contact.setId(interaction.contact.id)}
+              className="cursor-pointer"
+            >
               {search
                 ? highlightText(interaction.contact.fullName, search)
                 : interaction.contact.fullName}
-            </h1>
+            </a>
             {' · '}
             <h1 className="font-medium text-muted-foreground">
               {interaction.type.name}

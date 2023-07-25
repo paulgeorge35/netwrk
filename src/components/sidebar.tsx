@@ -438,6 +438,10 @@ export function Sidebar({ className }: SidebarProps) {
                       <SearchResults
                         contact={searchResults[contactIndex]}
                         search={search}
+                        onContactClick={(id: string) => {
+                          setIsSearchOpen(false);
+                          contact.setId(id);
+                        }}
                       />
                     )}
                   </div>
@@ -458,9 +462,11 @@ type ContactWithInteractions = Contact & {
 const SearchResults = ({
   contact,
   search,
+  onContactClick,
 }: {
   contact: ContactWithInteractions | undefined;
   search: string;
+  onContactClick: (id: string) => void;
 }) => {
   if (!contact) return null;
   const matchesContact =
@@ -480,7 +486,13 @@ const SearchResults = ({
                   {`${contact.fullName}`.slice(0, 1)}
                 </AvatarFallback>
               </Avatar>
-              <h1>{contact.fullName}</h1>
+              <a
+                role="button"
+                onClick={() => onContactClick(contact.id)}
+                className="cursor-pointer"
+              >
+                {contact.fullName}
+              </a>
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-2 px-4 pb-4">

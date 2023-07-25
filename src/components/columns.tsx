@@ -19,6 +19,7 @@ export const columns: ColumnDef<Contact>[] = [
         onCheckedChange={(value: boolean) =>
           table.toggleAllPageRowsSelected(!!value)
         }
+        onClick={(event) => event.stopPropagation()}
         aria-label="Select all"
         className="translate-y-[2px]"
       />
@@ -27,6 +28,7 @@ export const columns: ColumnDef<Contact>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value: boolean) => row.toggleSelected(!!value)}
+        onClick={(event) => event.stopPropagation()}
         aria-label="Select row"
         className="translate-y-[2px]"
       />
