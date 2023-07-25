@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SettingsCustomization } from '@/components/settings-customization';
 import { SettingsAccount } from '@/components/settings-account';
 import { PageHeader } from '@/components/page-header';
+import { SettingsNotifications } from '@/components/settings-notifications';
 
 const Settings: NextPage = (_) => {
   const session = useSession();
@@ -30,12 +31,12 @@ const Settings: NextPage = (_) => {
               <TabsTrigger value="account">Account</TabsTrigger>
               <TabsTrigger value="customization">Customization</TabsTrigger>
               <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="data">Data Import/Export</TabsTrigger>
-              <TabsTrigger value="privacy">Privacy</TabsTrigger>
+              {/* <TabsTrigger value="data">Data Import/Export</TabsTrigger> */}
               <TabsTrigger value="support">Support</TabsTrigger>
             </TabsList>
             <SettingsAccount />
             <SettingsCustomization />
+            <SettingsNotifications />
           </Tabs>
         </div>
       </main>
