@@ -7,7 +7,7 @@ import Picker from '@emoji-mart/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import { Separator } from '@radix-ui/react-separator';
-import { Bookmark, Clock, Plus, Search, Settings, Users } from 'lucide-react';
+import { Bookmark, Plus, Search, Settings, Users } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
