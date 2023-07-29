@@ -10,7 +10,11 @@ export const userRouter = createTRPCRouter({
       include: {
         accounts: true,
         sessions: true,
-        config: true,
+        config: {
+          include: {
+            timezone: true,
+          },
+        },
       },
     });
     return user;
@@ -72,6 +76,7 @@ export const userRouter = createTRPCRouter({
       z.object({
         reminderEmails: z.boolean().optional(),
         keepInTouch: z.boolean().optional(),
+        timezoneId: z.number().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

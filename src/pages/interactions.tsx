@@ -7,11 +7,12 @@ import { AddInteractionSheet } from '@/components/sheet-add-interaction';
 import { PageHeader } from '@/components/page-header';
 import { api } from '@/utils/api';
 import { format } from 'date-fns';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { compareDates } from '@/lib/utils';
 import { Command, CommandInput } from '@/components/ui/command';
 import { InteractionCard } from '@/components/interaction-card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SheetContext } from '@/contexts/SheetContext';
 
 const Interactions: NextPage = (_) => {
   const session = useSession();
@@ -23,6 +24,7 @@ const Interactions: NextPage = (_) => {
       enabled: false,
     }
   );
+  const { contact } = useContext(SheetContext);
 
   useEffect(() => {
     if (session) void refetch();
@@ -43,7 +45,7 @@ const Interactions: NextPage = (_) => {
               title="Interactions"
               subtitle="All of your Interactions"
             />
-            <AddInteractionSheet />
+            <AddInteractionSheet ignore={contact.isOpen} />
           </span>
           <Command className="my-4 h-12 max-w-[500px]  border">
             <CommandInput

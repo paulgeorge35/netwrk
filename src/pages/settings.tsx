@@ -8,6 +8,7 @@ import { SettingsCustomization } from '@/components/settings-customization';
 import { SettingsAccount } from '@/components/settings-account';
 import { PageHeader } from '@/components/page-header';
 import { SettingsNotifications } from '@/components/settings-notifications';
+import { SettingsSupport } from '@/components/settings-support';
 
 const Settings: NextPage = (_) => {
   const session = useSession();
@@ -37,6 +38,7 @@ const Settings: NextPage = (_) => {
             <SettingsAccount />
             <SettingsCustomization />
             <SettingsNotifications />
+            <SettingsSupport />
           </Tabs>
         </div>
       </main>

@@ -59,7 +59,7 @@ const interactionCreateSchema = z.object({
 type InteractionCreateValues = z.infer<typeof interactionCreateSchema>;
 type PromptType = 'SUMMARY' | 'SPELLING';
 
-export const AddInteractionSheet = () => {
+export const AddInteractionSheet = ({ ignore }: { ignore: boolean }) => {
   const { toast } = useToast();
   const [confetti, setConfetti] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(false);
@@ -69,7 +69,7 @@ export const AddInteractionSheet = () => {
   >(undefined);
 
   useHotkeys('i', () => {
-    setOpen(true);
+    if (!ignore) setOpen(true);
   });
 
   useHotkeys('mod+enter', () => {

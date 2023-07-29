@@ -3,6 +3,7 @@ import { groupRouter } from './routers/group';
 import { interactionRouter } from './routers/interaction';
 import { interactioTypeRouter } from './routers/interaction-type';
 import { openAIRouter } from './routers/open-ai';
+import { timezoneRouter } from './routers/timezone';
 import { userRouter } from './routers/user';
 import { createTRPCRouter } from './trpc';
 
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   interaction: interactionRouter,
   interactionType: interactioTypeRouter,
   ai: openAIRouter,
+  timezone: timezoneRouter,
 });
 
 // export type definition of API

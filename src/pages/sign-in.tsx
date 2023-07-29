@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { Command, Github } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 const SignInPage: NextPage = (_) => {
   const { data } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   if (data) void router.push('/');
@@ -47,14 +49,22 @@ const SignInPage: NextPage = (_) => {
                 variant="outline"
                 type="button"
                 className="w-full"
-                onClick={() =>
+                isLoading={isLoading}
+                onClick={() => {
+                  setIsLoading(true);
                   void signIn('github', {
                     callbackUrl: '/',
-                  })
-                }
+                  });
+                }}
               >
-                <Github className="mr-2 h-4 w-4" />
-                Github
+                {isLoading ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-t-2 border-blue-500"></div>
+                ) : (
+                  <>
+                    <Github className="mr-2 h-4 w-4" />
+                    Github
+                  </>
+                )}
               </Button>
               <p className="text-center text-xs text-muted-foreground">
                 If you already have an account, you will be signed in.
