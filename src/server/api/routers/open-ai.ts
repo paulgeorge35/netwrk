@@ -40,11 +40,11 @@ export const openAIRouter = createTRPCRouter({
           .transform((value) => {
             switch (value) {
               case 'SUMMARY':
-                return 'Summarize the following text in a concise and informative way: ';
+                return 'Summarize the following text in a concise and informative way, but keep the same perspective as the original text and do not add any introduction from your part: ';
               case 'SPELLING':
                 return 'Correct the following spelling mistakes: ';
               default:
-                return 'Summarize the following text in a concise and informative way: ';
+                return 'Summarize the following text in a concise and informative way, but keep the same perspective as the original text and do not add any introduction from your part: ';
             }
           }),
       })
