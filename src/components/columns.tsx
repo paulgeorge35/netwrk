@@ -35,7 +35,8 @@ export const columns: ColumnDef<Contact>[] = [
                   .split(' ')
                   .map((n) => n[0])
                   .filter((_, index) => index < 1)
-                  .join('')}
+                  .join('')
+                  .toUpperCase()}
               </AvatarFallback>
             </Avatar>
             {row.getValue('fullName')}
