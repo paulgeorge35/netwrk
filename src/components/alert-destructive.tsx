@@ -10,17 +10,20 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import type { ReactNode } from 'react';
 
 export function AlertDestructive({
   title = 'Are you absolutely sure?',
   description = 'This action cannot be undone.',
   button = 'Delete',
+  icon,
   solo,
   open,
   onOpenChange,
   action,
 }: {
   title?: string;
+  icon?: ReactNode;
   description?: string;
   button?: string;
   solo?: boolean;
@@ -31,7 +34,11 @@ export function AlertDestructive({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
-        {!solo && <Button variant="destructive">{button}</Button>}
+        {!solo && (
+          <Button size={icon ? 'icon' : 'default'} variant="destructive">
+            {icon ?? button}
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

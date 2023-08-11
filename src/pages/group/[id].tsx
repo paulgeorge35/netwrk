@@ -31,6 +31,7 @@ import { AddContactToGroupDialog } from '@/components/dialog-add-contact-to-grou
 import { SheetContext } from '@/contexts/SheetContext';
 import { useContext, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { Trash2 } from 'lucide-react';
 
 const groupUpdateSchema = z.object({
   name: z
@@ -254,6 +255,7 @@ function GroupHeader({ ...group }: GroupHeaderProps) {
         <AlertDestructive
           description="This action cannot be undone. This will permanently delete this group and remove the data from our servers"
           button="Delete Group"
+          icon={<Trash2 />}
           action={() =>
             deleteGroup(group.id, {
               onSuccess: () => {
